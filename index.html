@@ -41,7 +41,7 @@ button{font:inherit}
 <button class="g ib" id="next" aria-label="Следующая группа"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
 </div>
 <button class="g pl" id="lng" style="position:absolute;right:14px;top:calc(var(--st) + var(--ct) + 72px);height:32px;font-size:13px;font-weight:600;padding:0 12px;letter-spacing:.04em">EN</button>
-<div id="brow" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 70px);display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:bottom .5s cubic-bezier(.4,0,.2,1)">
+<div id="brow" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 88px);display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:bottom .5s cubic-bezier(.4,0,.2,1)">
 <div style="display:flex;gap:7px">
 <button class="g pl" id="favs" style="color:#F4C0D1"><i class="ti ti-heart" style="font-size:18px" aria-hidden="true"></i><span data-t="favs">Избранное</span><span class="cnt" id="fc" style="background:#F4C0D1;color:#4B1528"></span></button>
 <button class="g pl" id="mylists" style="color:#EAD3A6"><i class="ti ti-bookmarks" style="font-size:18px" aria-hidden="true"></i><span data-t="lists">Списки</span><span class="cnt" id="lc" style="background:#EAD3A6;color:#1A1330"></span></button>
@@ -52,9 +52,10 @@ button{font:inherit}
 <button class="g ib" id="rnd" aria-label="Случайный коктейль"><i class="ti ti-dice-5" aria-hidden="true"></i></button>
 </div>
 </div>
-<div id="segw" class="g" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 16px);border-radius:15px;padding:4px;display:flex;gap:4px;transition:opacity .4s">
+<div id="segw" class="g" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 34px);border-radius:15px;padding:4px;display:flex;gap:4px;transition:opacity .4s">
 <button class="seg on" data-m="b" data-t="segB">Основа</button><button class="seg" data-m="t" data-t="segT">Вкус</button><button class="seg" data-m="l" data-t="segL">Сложность</button>
 </div>
+<a id="ig" href="https://www.instagram.com/ne.drozd/" target="_blank" rel="noopener" aria-label="Instagram ne.drozd" style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 8px);height:20px;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:12px;letter-spacing:.02em;color:#9997B8;text-decoration:none"><i class="ti ti-brand-instagram" style="font-size:15px" aria-hidden="true"></i>ne.drozd</a>
 <div id="ov" style="position:absolute;inset:0;background:rgba(4,6,14,.62);opacity:0;pointer-events:none;transition:opacity .22s;display:flex;align-items:flex-end">
 <div id="sheet" role="dialog" aria-label="Панель" style="width:100%;max-height:calc(100% - var(--st) - var(--ct) - 24px);overflow:auto;background:#10142A;border-top:0.5px solid rgba(220,225,255,.14);border-radius:22px 22px 0 0;padding:14px 20px calc(var(--sb) + 24px);color:#EEEDFE;transform:translateY(40px);transition:transform .25s cubic-bezier(.2,.9,.3,1);box-sizing:border-box"></div>
 </div>
@@ -68,7 +69,7 @@ button{font:inherit}
 </div>
 
 <script>
-const ICONS={"adjustments-horizontal": "<path d=\"M12 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 6l8 0\" /> <path d=\"M16 6l4 0\" /> <path d=\"M6 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 12l2 0\" /> <path d=\"M10 12l10 0\" /> <path d=\"M15 18a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 18l11 0\" /> <path d=\"M19 18l1 0\" />", "arrow-left": "<path d=\"M5 12l14 0\" /> <path d=\"M5 12l6 6\" /> <path d=\"M5 12l6 -6\" />", "bookmarks": "<path d=\"M15 10v11l-5 -3l-5 3v-11a3 3 0 0 1 3 -3h4a3 3 0 0 1 3 3\" /> <path d=\"M11 3h5a3 3 0 0 1 3 3v11\" />", "bookmark": "<path d=\"M18 7v14l-6 -4l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4\" />", "bookmark-plus": "<path d=\"M12 17l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v5\" /> <path d=\"M16 19h6\" /> <path d=\"M19 16v6\" />", "bottle": "<path d=\"M10 5h4v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v2\" /> <path d=\"M14 3.5c0 1.626 .507 3.212 1.45 4.537l.05 .07a8.093 8.093 0 0 1 1.5 4.694v6.199a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-6.2c0 -1.682 .524 -3.322 1.5 -4.693l.05 -.07a7.823 7.823 0 0 0 1.45 -4.537\" /> <path d=\"M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805\" />", "check": "<path d=\"M5 12l5 5l10 -10\" />", "chevron-left": "<path d=\"M15 6l-6 6l6 6\" />", "chevron-right": "<path d=\"M9 6l6 6l-6 6\" />", "circle": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" />", "circle-check": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 12l2 2l4 -4\" />", "clock": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 7v5l3 3\" />", "copy": "<path d=\"M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666\" /> <path d=\"M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1\" />", "dice-5": "<path d=\"M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14\" /> <path d=\"M8 8.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M15 8.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M15 15.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M8 15.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M11.5 12a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" />", "dots-vertical": "<path d=\"M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M11 19a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M11 5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" />", "droplet": "<path d=\"M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602 -2.105 3.262 -5.708 1.566 -8.546l-4.89 -7.26c-.42 -.625 -1.287 -.803 -1.936 -.397a1.376 1.376 0 0 0 -.41 .397l-4.893 7.26c-1.695 2.838 -1.035 6.441 1.567 8.546\" />", "glass-full": "<path d=\"M8 21l8 0\" /> <path d=\"M12 15l0 6\" /> <path d=\"M17 3l1 7c0 3.012 -2.686 5 -6 5s-6 -1.988 -6 -5l1 -7h10\" /> <path d=\"M6 10a5 5 0 0 1 6 0a5 5 0 0 0 6 0\" />", "heart": "<path d=\"M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572\" />", "info-circle": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 9h.01\" /> <path d=\"M11 12h1v4h1\" />", "minus": "<path d=\"M5 12l14 0\" />", "plus": "<path d=\"M12 5l0 14\" /> <path d=\"M5 12l14 0\" />", "search": "<path d=\"M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\" /> <path d=\"M21 21l-6 -6\" />", "send": "<path d=\"M10 14l11 -11\" /> <path d=\"M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5\" />", "shopping-bag": "<path d=\"M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304\" /> <path d=\"M9 11v-5a3 3 0 0 1 6 0v5\" />", "sparkles": "<path d=\"M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6\" />", "trash": "<path d=\"M4 7l16 0\" /> <path d=\"M10 11l0 6\" /> <path d=\"M14 11l0 6\" /> <path d=\"M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12\" /> <path d=\"M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3\" />", "x": "<path d=\"M18 6l-12 12\" /> <path d=\"M6 6l12 12\" />", "lemon": "<path d=\"M17.536 3.393c3.905 3.906 3.905 10.237 0 14.143c-3.906 3.905 -10.237 3.905 -14.143 0l14.143 -14.143\" /> <path d=\"M5.868 15.06a6.5 6.5 0 0 0 9.193 -9.192\" /> <path d=\"M10.464 10.464l4.597 4.597\" /> <path d=\"M10.464 10.464v6.364\" /> <path d=\"M10.464 10.464h6.364\" />", "snowflake": "<path d=\"M10 4l2 1l2 -1\" /> <path d=\"M12 2v6.5l3 1.72\" /> <path d=\"M17.928 6.268l.134 2.232l1.866 1.232\" /> <path d=\"M20.66 7l-5.629 3.25l.01 3.458\" /> <path d=\"M19.928 14.268l-1.866 1.232l-.134 2.232\" /> <path d=\"M20.66 17l-5.629 -3.25l-2.99 1.738\" /> <path d=\"M14 20l-2 -1l-2 1\" /> <path d=\"M12 22v-6.5l-3 -1.72\" /> <path d=\"M6.072 17.732l-.134 -2.232l-1.866 -1.232\" /> <path d=\"M3.34 17l5.629 -3.25l-.01 -3.458\" /> <path d=\"M4.072 9.732l1.866 -1.232l.134 -2.232\" /> <path d=\"M3.34 7l5.629 3.25l2.99 -1.738\" />"};
+const ICONS={"adjustments-horizontal": "<path d=\"M12 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 6l8 0\" /> <path d=\"M16 6l4 0\" /> <path d=\"M6 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 12l2 0\" /> <path d=\"M10 12l10 0\" /> <path d=\"M15 18a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /> <path d=\"M4 18l11 0\" /> <path d=\"M19 18l1 0\" />", "arrow-left": "<path d=\"M5 12l14 0\" /> <path d=\"M5 12l6 6\" /> <path d=\"M5 12l6 -6\" />", "bookmarks": "<path d=\"M15 10v11l-5 -3l-5 3v-11a3 3 0 0 1 3 -3h4a3 3 0 0 1 3 3\" /> <path d=\"M11 3h5a3 3 0 0 1 3 3v11\" />", "bookmark": "<path d=\"M18 7v14l-6 -4l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4\" />", "bookmark-plus": "<path d=\"M12 17l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v5\" /> <path d=\"M16 19h6\" /> <path d=\"M19 16v6\" />", "bottle": "<path d=\"M10 5h4v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v2\" /> <path d=\"M14 3.5c0 1.626 .507 3.212 1.45 4.537l.05 .07a8.093 8.093 0 0 1 1.5 4.694v6.199a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-6.2c0 -1.682 .524 -3.322 1.5 -4.693l.05 -.07a7.823 7.823 0 0 0 1.45 -4.537\" /> <path d=\"M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805\" />", "check": "<path d=\"M5 12l5 5l10 -10\" />", "chevron-left": "<path d=\"M15 6l-6 6l6 6\" />", "chevron-right": "<path d=\"M9 6l6 6l-6 6\" />", "circle": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" />", "circle-check": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M9 12l2 2l4 -4\" />", "clock": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 7v5l3 3\" />", "copy": "<path d=\"M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666\" /> <path d=\"M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1\" />", "dice-5": "<path d=\"M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14\" /> <path d=\"M8 8.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M15 8.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M15 15.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M8 15.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" /> <path d=\"M11.5 12a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0\" fill=\"currentColor\" />", "dots-vertical": "<path d=\"M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M11 19a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M11 5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" />", "droplet": "<path d=\"M7.502 19.423c2.602 2.105 6.395 2.105 8.996 0c2.602 -2.105 3.262 -5.708 1.566 -8.546l-4.89 -7.26c-.42 -.625 -1.287 -.803 -1.936 -.397a1.376 1.376 0 0 0 -.41 .397l-4.893 7.26c-1.695 2.838 -1.035 6.441 1.567 8.546\" />", "glass-full": "<path d=\"M8 21l8 0\" /> <path d=\"M12 15l0 6\" /> <path d=\"M17 3l1 7c0 3.012 -2.686 5 -6 5s-6 -1.988 -6 -5l1 -7h10\" /> <path d=\"M6 10a5 5 0 0 1 6 0a5 5 0 0 0 6 0\" />", "heart": "<path d=\"M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572\" />", "info-circle": "<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\" /> <path d=\"M12 9h.01\" /> <path d=\"M11 12h1v4h1\" />", "minus": "<path d=\"M5 12l14 0\" />", "plus": "<path d=\"M12 5l0 14\" /> <path d=\"M5 12l14 0\" />", "search": "<path d=\"M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\" /> <path d=\"M21 21l-6 -6\" />", "send": "<path d=\"M10 14l11 -11\" /> <path d=\"M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5\" />", "shopping-bag": "<path d=\"M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304\" /> <path d=\"M9 11v-5a3 3 0 0 1 6 0v5\" />", "sparkles": "<path d=\"M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6\" />", "trash": "<path d=\"M4 7l16 0\" /> <path d=\"M10 11l0 6\" /> <path d=\"M14 11l0 6\" /> <path d=\"M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12\" /> <path d=\"M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3\" />", "x": "<path d=\"M18 6l-12 12\" /> <path d=\"M6 6l12 12\" />", "brand-instagram": "<path d=\"M4 8a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4l0 -8\" /> <path d=\"M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" /> <path d=\"M16.5 7.5v.01\" />", "lemon": "<path d=\"M17.536 3.393c3.905 3.906 3.905 10.237 0 14.143c-3.906 3.905 -10.237 3.905 -14.143 0l14.143 -14.143\" /> <path d=\"M5.868 15.06a6.5 6.5 0 0 0 9.193 -9.192\" /> <path d=\"M10.464 10.464l4.597 4.597\" /> <path d=\"M10.464 10.464v6.364\" /> <path d=\"M10.464 10.464h6.364\" />", "snowflake": "<path d=\"M10 4l2 1l2 -1\" /> <path d=\"M12 2v6.5l3 1.72\" /> <path d=\"M17.928 6.268l.134 2.232l1.866 1.232\" /> <path d=\"M20.66 7l-5.629 3.25l.01 3.458\" /> <path d=\"M19.928 14.268l-1.866 1.232l-.134 2.232\" /> <path d=\"M20.66 17l-5.629 -3.25l-2.99 1.738\" /> <path d=\"M14 20l-2 -1l-2 1\" /> <path d=\"M12 22v-6.5l-3 -1.72\" /> <path d=\"M6.072 17.732l-.134 -2.232l-1.866 -1.232\" /> <path d=\"M3.34 17l5.629 -3.25l-.01 -3.458\" /> <path d=\"M4.072 9.732l1.866 -1.232l.134 -2.232\" /> <path d=\"M3.34 7l5.629 3.25l2.99 -1.738\" />"};
 function paintIcons(root){root.querySelectorAll('i.ti').forEach(el=>{const m=[...el.classList].find(c=>c.startsWith('ti-'));if(!m)return;const n=m.slice(3);if(el.dataset.ic===n)return;el.dataset.ic=n;el.innerHTML=ICONS[n]?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>':''})}
 const APP=document.getElementById('app');paintIcons(APP);new MutationObserver(()=>paintIcons(APP)).observe(APP,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
 
@@ -222,8 +223,8 @@ const ING_EN={'Butterscotch шнапс':'Butterscotch schnapps','Абсент':'
 const GL_EN={'коктейльная рюмка':'cocktail glass','лоубол':'lowball','мартинка':'martini glass','купе':'coupe','винный бокал':'wine glass','шот':'shot glass','флюте':'flute','хайбол':'highball glass','мул-кружка или рокс':'mule mug or rocks','рокс':'rocks glass','кувшин':'pitcher','маргаритка':'margarita glass','ирландский бокал':'Irish coffee glass'};
 const AM_EN=[['несколько капель','a few drops'],['несколько листьев','a few leaves'],['(по желанию)','(optional)'],['для ополаскивания','to rinse'],['для посыпки','to sprinkle'],['для подачи','to garnish'],['по вкусу','to taste'],['щепотка','a pinch'],['долить','top up'],['долька','wedge'],['веточек','sprigs'],['листьев','leaves'],['ломтика','slices'],['палочки','sticks'],['палочка','stick'],['бутонов','cloves'],['бутона','cloves'],['звёздочки','star anise'],['ч. л.','tsp'],['ст. л.','tbsp'],['дэша','dashes'],['дэш','dash'],['капли','drops'],['слой','layer'],['шапка','topping'],['шт','pc'],[/(\d) л$/,'$1 l'],[/(\d) г$/,'$1 g']];
 const BE={vodka:'Vodka',gin:'Gin',rum:'Rum & cachaça',teq:'Tequila & mezcal',whisky:'Whisky',brandy:'Cognac & brandy',wine:'Sparkling & wine',liq:'Liqueurs & aperitifs',zero:'Alcohol-free'};
-const TE={sour:'Sour',fruit:'Fruity',creamy:'Creamy & dessert',coffee:'Coffee',bitter:'Bitter',fresh:'Refreshing',herbal:'Spicy & herbal',strong:'Spirit-forward',hot:'Warming'};
-const LE={1:'Pour & stir',2:'Shaken',3:'Stirred',4:'For pros'};
+const TE={sweet:'Sweet',sour:'Sour',fruit:'Fruity',creamy:'Creamy & dessert',coffee:'Coffee',bitter:'Bitter',fresh:'Refreshing',herbal:'Spicy & herbal',strong:'Spirit-forward',hot:'Warming'};
+const LE={1:'Pour & stir',2:'Shaken',3:'Stirred',4:'For pros',few:'Few ingredients',many:'Many ingredients',batch:'For a crowd'};
 const STR={ru:{appTitle:'Что пьём?',appSub:'мини-приложение',close:'Закрыть',favs:'Избранное',lists:'Списки',segB:'Основа',segT:'Вкус',segL:'Сложность',
 ageText:'Здесь рецепты алкогольных напитков. Подтвердите, что вам уже исполнилось 18 лет.',age18:'Мне есть 18',age0:'Только безалкогольные',
 subOv:'крутите небо · коснитесь созвездия',subG:'двойной тап или щипок — назад',subScroll:'листайте · щипок — назад',steps:'Как готовить',no:'нет: ',
@@ -402,12 +403,12 @@ if(sp.tech==='build'||sp.tech==='buildN')out.push(sp.tech==='build'?S.stirGentle
 if(sp.tech==='muddle')out.push(S.mudEnd);
 if(f.g==='ang')out.push(S.ang);else if(f.g)out.push(S.garn(GARN_T[lang][f.g]));else out.push(S.serve);
 return out.map(s=>s.replace(/\.\.(?=\s|$)/g,'.'))}
-const NC={blue:['#A8D4FF','#4DA3FF','#0B3D73','#062240'],teal:['#9FF0D2','#2ED3A0','#075540','#033326'],amber:['#FFD58A','#FFAA2B','#6B3D00','#3D2300'],green:['#D6F59A','#9BDB2E','#3A5A06','#203303'],coral:['#FFC2A3','#FF7A3D','#7A2B0A','#451704'],pink:['#FFB8DD','#FF5CB0','#7A1048','#450827'],gray:['#E8EBF2','#B8C0D0','#3B4250','#22262E'],purple:['#D7C9FF','#9C7BFF','#3B2490','#211250'],red:['#FFB0B8','#FF4D62','#7A0F1F','#45070F']};
+const NC={blue:['#A8D4FF','#4DA3FF','#0B3D73','#062240'],teal:['#9FF0D2','#2ED3A0','#075540','#033326'],amber:['#FFD58A','#FFAA2B','#6B3D00','#3D2300'],green:['#D6F59A','#9BDB2E','#3A5A06','#203303'],coral:['#FFC2A3','#FF7A3D','#7A2B0A','#451704'],pink:['#FFB8DD','#FF5CB0','#7A1048','#450827'],gray:['#E8EBF2','#B8C0D0','#3B4250','#22262E'],purple:['#D7C9FF','#9C7BFF','#3B2490','#211250'],red:['#FFB0B8','#FF4D62','#7A0F1F','#45070F'],yellow:['#FFF3B0','#FFD84D','#6B5A00','#3D3300']};
 const B={vodka:['Водка','blue'],gin:['Джин','teal'],rum:['Ром и кашаса','amber'],teq:['Текила и мескаль','green'],whisky:['Виски','coral'],brandy:['Коньяк и бренди','red'],wine:['Игристое и вино','purple'],liq:['Ликёры и аперитивы','pink'],zero:['Без алкоголя','gray']};
-const T={sour:'Кислые',fruit:'Фруктовые',creamy:'Сливочные и десертные',coffee:'Кофейные',bitter:'Горькие',fresh:'Освежающие',herbal:'Пряные и травяные',strong:'Крепкие',hot:'Согревающие'};
-const TC={sour:'green',fruit:'pink',creamy:'gray',coffee:'amber',bitter:'coral',fresh:'teal',herbal:'purple',strong:'blue',hot:'red'};
-const L={1:'Налить и смешать',2:'Шейкер',3:'Смесительный стакан',4:'Для профи'};
-const LC={1:'teal',2:'amber',3:'purple',4:'coral'};
+const T={sweet:'Сладкие',sour:'Кислые',fruit:'Фруктовые',creamy:'Сливочные и десертные',coffee:'Кофейные',bitter:'Горькие',fresh:'Освежающие',herbal:'Пряные и травяные',strong:'Крепкие',hot:'Согревающие'};
+const TC={sweet:'yellow',sour:'green',fruit:'pink',creamy:'gray',coffee:'amber',bitter:'coral',fresh:'teal',herbal:'purple',strong:'blue',hot:'red'};
+const L={1:'Налить и смешать',2:'Шейкер',3:'Смесительный стакан',4:'Для профи',few:'Малосоставные',many:'Многосоставные',batch:'На компанию'};
+const LC={1:'teal',2:'amber',3:'purple',4:'coral',few:'green',many:'pink',batch:'blue'};
 const D=RAW.concat(RAW2).map(([n,b,t,l,g,ing,m,note,bt,src,v],i)=>({i,n,b,t,l,g,ing,m,note,bt,src,v,ings:ing.split(';').map(s=>{const[a,am]=s.split('|');return{a,am}})}));
 Object.entries(EN2).forEach(([k,v])=>{EN[k]=[v[0],'',v[1]]});EN['Last word'][0]='Last Word (rum)';
 D.forEach(d=>{d.sp=parseSp(SP[d.n]);d.l=d.sp.tech==='custom'?+(d.sp.f.L||2):(LVL[d.sp.tech]||2);if(d.n==='Last word')d.v='Последнее слово';if(d.n==='Кир рояль')d.v='Кир'});
@@ -415,7 +416,7 @@ const tg=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDat
 const BOT_URL='https://t.me/whattodrinkuh_bot/app';
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),ov=document.getElementById('ov'),sheet=document.getElementById('sheet');
 const lc=document.createElement('canvas'),lctx=lc.getContext('2d');
-let W,H,DPR=1,SAFE_T=0,SAFE_B=0,mode='b',hubs=[],M=[[1,0,0],[0,1,0],[0,0,1]],wx=0,wy=0,drag=false,focus=null,sel=null,lastHdr='',zoom=1,zA=1,zB=1,zT0=0,inGroup=false,tilt=[0,0],cardOpen=false,lists=[],lid=1,bgx=0,bgy=0,fontsOk=0,E=0;
+let PL=[],W,H,DPR=1,SAFE_T=0,SAFE_B=0,mode='b',hubs=[],M=[[1,0,0],[0,1,0],[0,0,1]],wx=0,wy=0,drag=false,focus=null,sel=null,lastHdr='',zoom=1,zA=1,zB=1,zT0=0,inGroup=false,tilt=[0,0],cardOpen=false,lists=[],lid=1,bgx=0,bgy=0,fontsOk=0,E=0;
 const fav=new Set(),bar=new Set(),notes={};
 const F={can:false,noEgg:false,noDairy:false,batch:false,mine:false,zero:false};
 const ZF=2,STAR=11,DOT=3.5,HUB0=29,HUB1=40,LIM=.45,SCOV=.2/260;
@@ -451,6 +452,46 @@ const isEgg=d=>d.ings.some(x=>/белок|желток/i.test(x.a)&&!/по же�
 function passes(d){if(F.can&&bar.size&&missOf(d).length)return false;if(F.noEgg&&isEgg(d))return false;if(F.noDairy&&isDairy(d))return false;if(F.batch&&!d.bt)return false;if(F.mine&&d.src!=='my')return false;if(F.zero&&d.b!=='zero')return false;return true}
 const ABV=[[/151|крепкий белый ром/i,70],[/ангостура/i,44],[/портвейн/i,19],[/херес/i,17],[/лилле/i,17],[/чинар/i,16],[/фалернум/i,11],[/амаро/i,35],[/фернет/i,39],[/бенедиктин|драмбуи|гран марнье/i,40],[/амаретто/i,28],[/кюрасао/i,30],[/апероль/i,11],[/красный биттер/i,25],[/вермут/i,16],[/шартрез/i,55],[/мараскино/i,32],[/трипл|куантро|апельсиновый ликёр/i,35],[/бейлис|сливочный ликёр/i,17],[/кофейный ликёр/i,20],[/какао/i,25],[/ликёр|шнапс/i,20],[/игрист|шампан|просекко/i,11],[/вино/i,12],[/водка|джин|ром|текила|мескаль|виски|бурбон|скотч|коньяк|бренди|кашаса|писко|граппа|кальвадос/i,40]];
 function strength(d){let vol=0,alc=0;d.ings.forEach(x=>{const m=x.am.match(/^~?(\d+)(?:–(\d+))?$/);let ml=m?+(m[2]||m[1]):(x.am==='долить'?80:0);if(/дэш|капл/.test(x.am))ml=0;vol+=ml;const r=ABV.find(p=>p[0].test(x.a));if(r&&ml)alc+=ml*r[1]/100});const tq=d.sp.tech;const dil=d.sp.f.hot||/кипят|горяч/i.test(d.ing)?0:['shake','dry','muddleS'].includes(tq)?.25:tq==='stir'?.2:tq==='blend'?.3:.1;const tv=vol*(1+dil);return{abv:tv?Math.round(alc/tv*100):0,vol:Math.round(tv/10)*10}}
+/* ===== Несколько вкусов у коктейля =====
+   Основной вкус (поле t) остаётся первым; к нему по составу добавляются ещё до двух вкусов.
+   Крепкий бывает сладким или горьким, кислый — фруктовым и т.д. Ручные правки — в TASTE_FIX. */
+const TASTE_ORDER=['strong','sweet','sour','bitter','coffee','creamy','fruit','herbal','fresh','hot'];
+const TASTE_FIX={'Олд фэшн':['strong','sweet'],'Виски сауэр':['sour','sweet'],'Секс на пляже':['fruit','sweet'],'Текила санрайз':['fruit','sweet'],'Мэри Пикфорд':['fruit','sweet'],
+'Горячий тодди':['hot','sweet','herbal'],'Глинтвейн':['hot','fruit','herbal'],'Сангрия':['fruit','fresh'],'Шампанский коктейль':['strong','fresh','sweet'],'Джин-тоник':['fresh','bitter'],
+'Пина колада':['creamy','fruit','sweet'],'Вирджин колада':['creamy','fruit','sweet'],'Порнстар мартини':['fruit','sweet','sour'],'Рамос джин физз':['creamy','sour','fresh']};
+function mlOf(x){const m=x.am.match(/^~?(\d+)(?:–(\d+))?/);if(/дэш|капл/.test(x.am))return 2;if(m&&!/шт|ч\. л|ст\. л|г$|л$|вет|лист|ломт|палоч|бутон|звёзд|кусоч|кубик/.test(x.am))return +(m[2]||m[1]);if(/ч\. л/.test(x.am))return (m?+m[1]:1)*5;if(/ст\. л/.test(x.am))return (m?+m[1]:1)*15;if(x.am==='долить')return 80;if(/слой/.test(x.am))return 15;if(/шапка/.test(x.am))return 20;if(/шт/.test(x.am))return 20;return 0}
+function tasteScores(d){const sc={};let tot=0;const add=(k,v)=>{sc[k]=(sc[k]||0)+v};
+d.ings.forEach(x=>{if(/для подачи/.test(x.am))return;const a=x.a,v=mlOf(x);tot+=v;
+if(/лимонный сок|сок лайма|^лайм$|^лимон$/i.test(a)&&!/ломтик|долька/.test(x.am))add('sour',/шт/.test(x.am)?20:v);
+if(/сироп|^сахар|тростниковый сахар|коричневый сахар|^мёд|гренадин|оршад|кордиал|амаретто|бенедиктин|драмбуи|шнапс|какао|мятный ликёр|трипл|куантро|кюрасао|гран марнье|сливочный ликёр|бейлис|кофейный ликёр|апельсиновый ликёр|яблочный ликёр|черносмородинов|ежевичн|малиновый ликёр|персиковый ликёр|вишнёвый ликёр|ликёр маракуйи|франжелико|бузинный|фиалков|мараскино|черри херинг|спрайт|кола|имбирный эль|портвейн/i.test(a))add('sweet',v);
+if(/красный биттер|апероль|фернет|чинар|амаро|кампари/i.test(a)||(/ангостура/i.test(a)&&v>=15))add('bitter',v);
+if(/кофе|эспрессо/i.test(a))add('coffee',v||20);
+if(/сливк|сливочн|бейлис|кокос|какао|молок|желток/i.test(a))add('creamy',v||20);
+if(/апельсиновый сок|ананас|клюкв|маракуй|персик|клубник|малин|черносмородин|ежевичн|гренадин|вишн|яблоч|яблоко|абрикос|грейпфрут|ягод|кальвадос|пюре|сангри/i.test(a))add('fruit',v||20);
+if(/шартрез|мят|базилик|бенедиктин|абсент|имбир|перец|табаско|вустер|корица|гвоздик|бадьян|драмбуи|фалернум|пименто|фиалк|бузин|ромашк|томат|вермут/i.test(a))add('herbal',Math.max(v,10));
+if(/содов|тоник|газиров|игрист|шампан|просекко|кола|спрайт|имбирное пиво|имбирный эль|огур|холодный.*чай/i.test(a))add('fresh',v);
+});
+if(/мята/i.test(d.ing)&&/содов|газиров|просекко|игрист|тоник/i.test(d.ing))add('fresh',30);
+const st=strength(d);if(d.b!=='zero'&&st.abv>=24)add('strong',100);
+if(d.sp.f.hot||d.t==='hot'||/кипят|горячий кофе/i.test(d.ing))add('hot',100);
+return{sc,tot:Math.max(tot,1),st}}
+function assignTastes(){D.forEach(d=>{const{sc,tot,st}=tasteScores(d);const pick=[];
+const r=k=>(sc[k]||0)/tot;
+if(sc.strong)pick.push('strong');
+if(sc.hot)pick.push('hot');
+if(r('sour')>=.12&&st.abv<30)pick.push('sour');
+if(r('sweet')>=.22||(r('sweet')>=.15&&!pick.includes('sour')))pick.push('sweet');
+if(r('bitter')>=.15)pick.push('bitter');
+if(sc.coffee)pick.push('coffee');
+if(r('creamy')>=.12)pick.push('creamy');
+if(r('fruit')>=.18)pick.push('fruit');
+if(sc.herbal&&r('herbal')>=.08)pick.push('herbal');
+if(r('fresh')>=.3&&st.abv<20)pick.push('fresh');
+let ts=[d.t,...TASTE_ORDER.filter(k=>k!==d.t&&pick.includes(k))].slice(0,3);
+if(TASTE_FIX[d.n])ts=TASTE_FIX[d.n];d.ts=ts;
+/* сложность: техника + число ингредиентов + на компанию */
+const cnt=d.ings.filter(x=>!/для подачи|по вкусу|по желанию|для ополаскивания|для посыпки/.test(x.am)&&!/^(Лёд|Вода|Кипяток|Соль|Соль и перец)$/.test(x.a)).length;
+d.cnt=cnt;d.lx2=[];if(cnt<=3)d.lx2.push('few');if(cnt>=6)d.lx2.push('many');if(d.bt||d.g==='кувшин')d.lx2.push('batch')})}
 function glassType(g){if(/кружка|ирланд/.test(g))return'mug';if(/кувшин/.test(g))return'pitch';if(/хайбол/.test(g))return'high';if(/мартинка|рюмка/.test(g))return'mart';if(/купе|маргаритка/.test(g))return'coupe';if(/флюте/.test(g))return'flute';if(/шот/.test(g))return'shot';if(/винный/.test(g))return'wine';if(/рокс|лоубол/.test(g))return'rocks';return''}
 function drawGlass(t,x,y,s,col){ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
 if(t==='rocks'){ctx.moveTo(x-s*.55,y-s*.45);ctx.lineTo(x-s*.5,y+s*.5);ctx.lineTo(x+s*.5,y+s*.5);ctx.lineTo(x+s*.55,y-s*.45)}
@@ -465,8 +506,9 @@ else if(t==='pitch'){ctx.moveTo(x-s*.45,y-s*.6);ctx.lineTo(x-s*.45,y+s*.6);ctx.l
 else{ctx.arc(x,y,s*.18,0,7)}
 ctx.stroke()}
 function size(){DPR=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);lc.width=W*DPR;lc.height=H*DPR;lctx.setTransform(DPR,0,0,DPR,0,0);
-SAFE_T=Math.max(0,document.getElementById('hdr').offsetTop-12);SAFE_B=Math.max(0,(parseFloat(getComputedStyle(document.getElementById('segw')).bottom)||16)-16);lastHdr=''}
-const key=d=>mode=='b'?d.b:mode=='t'?d.t:d.l;
+SAFE_T=Math.max(0,document.getElementById('hdr').offsetTop-12);SAFE_B=Math.max(0,(parseFloat(getComputedStyle(document.getElementById('segw')).bottom)||16)-16);lastHdr='';routeCache=new Map()}
+const keysOf=d=>mode=='b'?[d.b]:mode=='t'?d.ts:[d.l,...d.lx2];
+const KORDER={t:Object.keys(T),l:[1,2,3,4,'few','many','batch']};
 const glabel=k=>mode=='b'?bName(k):mode=='t'?tName(k):lName(k);
 const gcol=k=>mode=='b'?B[k][1]:mode=='t'?TC[k]:LC[k];
 const plural=n=>t('plural')(n);
@@ -474,42 +516,46 @@ function lattice(m,seed){const dense=m>20;const RY=dense?56:64,ev=dense?[-150,-7
 for(;;){pts=[];for(let k=-KM;k<=KM;k++){const y=k*RY;(k%2===0?ev:od).forEach(x=>{const d=Math.hypot(x,y);if(d>=hole)pts.push([x,y,d])})}if(pts.length>=m*1.2||KM>12)break;KM++}
 pts.sort((a,b)=>a[2]-b[2]||a[1]-b[1]||a[0]-b[0]);return{lw:dense?70:84,pts:pts.map(p=>[p[0]+(R()-.5)*5,p[1]+(R()-.5)*5,(R()-.4)*.14])}}
 function blocks(o,s){const so=Math.hypot(s[0],s[1]);const pr=(o[0]*s[0]+o[1]*s[1])/so;if(pr<=8||pr>=so-8)return false;return Math.abs(o[0]*s[1]-o[1]*s[0])/so<21}
-function build(){const keys=[...new Set(D.map(key))];const n=keys.length;
+function build(){if(!D[0].ts)assignTastes();const ks=new Set(D.flatMap(keysOf));const keys=KORDER[mode]?KORDER[mode].filter(k=>ks.has(k)):[...ks];const n=keys.length;PL=[];routeCache=new Map();
 hubs=keys.map((k,i)=>{const y=(1-2*(i+.5)/n)*.8,r=Math.sqrt(1-y*y),th=i*2.39996;const v=norm([Math.cos(th)*r,y,Math.sin(th)*r]);let u=cross(v,[0,1,0]);if(Math.hypot(...u)<.1)u=[1,0,0];u=norm(u);const w=cross(v,u);return{hub:1,k,n:glabel(k),tgt:v,u,w,pos:[0,0,0],c:gcol(k)}});
-hubs.forEach(h=>{const items=D.filter(d=>key(d)==h.k);h.items=items;const P=lattice(items.length,h.k+mode);h.lw=P.lw;let free=P.pts.slice();const occ=[],bs=[];
-const set=(d,p)=>{d.lx=p[0];d.ly=p[1];d.dz=p[2];d.hubRef=h;d._lk=null;d.par=null;free=free.filter(q=>q!==p);occ.push(p)};const pOf=d=>d.v?items.find(o=>o.n===d.v&&!o.v):null;
+hubs.forEach(h=>{const items=D.filter(d=>keysOf(d).includes(h.k));h.items=items;const pcs=new Map(items.map(d=>[d,{d,hubRef:h,par:null,_lk:null,lx:0,ly:0,dz:0}]));const P=lattice(items.length,h.k+mode);h.lw=P.lw;let free=P.pts.slice();const occ=[],bs=[];
+const set=(d,p)=>{const pc=pcs.get(d);pc.lx=p[0];pc.ly=p[1];pc.dz=p[2];free=free.filter(q=>q!==p);occ.push(p)};const PC=d=>pcs.get(d);const pOf=d=>d.v?items.find(o=>o.n===d.v&&!o.v):null;
 const hasK=d=>items.some(v=>pOf(v)===d);const base=items.filter(d=>!pOf(d)).sort((x,y)=>(hasK(y)?1:0)-(hasK(x)?1:0));
 const placeBase=d=>{const p=free.find(s=>!occ.some(o=>blocks(o,s))&&!bs.some(b=>blocks(s,b)))||free[0];set(d,p);bs.push(p)};
-const placeVar=(v,par)=>{const pr=Math.hypot(par.lx,par.ly);const c=free.slice().sort((a,b)=>(Math.hypot(a[0]-par.lx,a[1]-par.ly)+(Math.hypot(a[0],a[1])<pr-1?45:0))-(Math.hypot(b[0]-par.lx,b[1]-par.ly)+(Math.hypot(b[0],b[1])<pr-1?45:0)));const p=c.find(s=>!bs.some(b=>blocks(s,b)))||c[0];set(v,p);v.par=par};
-base.forEach(par=>{placeBase(par);items.filter(v=>pOf(v)===par).forEach(v=>placeVar(v,par))});h.maxY=Math.max(0,...items.map(d=>Math.abs(d.ly)))+64});
+const placeVar=(v,pd)=>{const par=PC(pd);const pr=Math.hypot(par.lx,par.ly);const c=free.slice().sort((a,b)=>(Math.hypot(a[0]-par.lx,a[1]-par.ly)+(Math.hypot(a[0],a[1])<pr-1?45:0))-(Math.hypot(b[0]-par.lx,b[1]-par.ly)+(Math.hypot(b[0],b[1])<pr-1?45:0)));const p=c.find(s=>!bs.some(b=>blocks(s,b)))||c[0];set(v,p);PC(v).par=par};
+base.forEach(par=>{placeBase(par);items.filter(v=>pOf(v)===par).forEach(v=>placeVar(v,par))});h.pcs=[...pcs.values()];PL.push(...h.pcs);h.maxY=Math.max(0,...h.pcs.map(q=>Math.abs(q.ly)))+64});
 hubs.forEach(h=>{h.nb=hubs.filter(o=>o!==h).sort((p,q)=>dot(q.tgt,h.tgt)-dot(p.tgt,h.tgt)).slice(0,2)});
 focus=null;sel=null;lastHdr='';inGroup=false;zA=zB=zoom=1;closeSheet();syncUI()}
 const CY0=()=>SAFE_T+(H-SAFE_T-SAFE_B)*.47,CY1=()=>(SAFE_T+66+(H-SAFE_B-58))/2;
-function cpos(d){const h=d.hubRef;const isF=h===focus;const Sg=Math.min(W,H)*.3*ZF;const Ln=Math.hypot(d.lx,d.ly)||1;const ov=(.32+.1*Ln/280)/Ln;const sc=isF?ov+(1/Sg-ov)*E:ov;const dz=d.dz*(isF?1-E:1);return[0,1,2].map(q=>h.pos[q]*(1+dz)+(-h.u[q]*d.lx+h.w[q]*d.ly)*sc)}
+function cpos(d){/* d — размещение коктейля в группе */const h=d.hubRef;const isF=h===focus;const Sg=Math.min(W,H)*.3*ZF;const Ln=Math.hypot(d.lx,d.ly)||1;const ov=(.32+.1*Ln/280)/Ln;const sc=isF?ov+(1/Sg-ov)*E:ov;const dz=d.dz*(isF?1-E:1);return[0,1,2].map(q=>h.pos[q]*(1+dz)+(-h.u[q]*d.lx+h.w[q]*d.ly)*sc)}
 function viewM(){const tx=LIM*Math.tanh(tilt[0]/LIM),ty=LIM*Math.tanh(tilt[1]/LIM);return mm(axr([0,1,0],tx),mm(axr([1,0,0],ty),M))}
-function proj(p,pv,R){const q=mv(R,[p[0]-pv[0],p[1]-pv[1],p[2]-pv[2]]);const S=Math.min(W,H-SAFE_T-SAFE_B)*.3*zoom;const sp=4/(4-q[2]);const s=1+(sp-1)*(1-E);const cy=CY0()+(CY1()-CY0())*E+panY*E;return{x:W/2+q[0]*S*s,y:cy-q[1]*S*s,z:q[2]}}
+function proj(p,pv,R){const q=mv(R,[p[0]-pv[0],p[1]-pv[1],p[2]-pv[2]]);const S=Math.min(W,H)*.3*zoom;const sp=4/(4-q[2]);const s=1+(sp-1)*(1-E);const cy=CY0()+(CY1()-CY0())*E+panY*E;return{x:W/2+q[0]*S*s,y:cy-q[1]*S*s,z:q[2]}}
 function frontHub(){let best=null,bz=-9;hubs.forEach(h=>{const z=mv(M,h.tgt)[2];if(z>bz){bz=z;best=h}});return best}
 const colOf=n=>n.hub?NC[n.c]:NC[B[n.b][1]];
 const inAny=d=>lists.some(l=>l.items.has(d.i));
 const relOf=d=>D.filter(o=>o!==d&&(mode=='b'?o.t==d.t:o.b==d.b)&&o.n!==d.v&&o.v!==d.n).slice(0,8);
 const LF='500 12px "Roboto Condensed", Manrope, sans-serif',LF2='400 11px Manrope, sans-serif';
 function wrapLines(text,font,maxW){ctx.font=font;const words=text.split(' ');const lines=[];let cur='';words.forEach(w=>{const t=cur?cur+' '+w:w;if(ctx.measureText(t).width<=maxW||!cur)cur=t;else{lines.push(cur);cur=w}});if(cur)lines.push(cur);return lines}
-function lbl(d){const ms=bar.size?missOf(d):[];const extra=ms.length===1&&d.hubRef.lw===84?t('no')+ingN(ms[0]).toLowerCase():'';const k=fontsOk+'|'+d.hubRef.lw+'|'+extra;if(d._lk!==k){d._lk=k;const lines=wrapLines(nm(d),LF,d.hubRef.lw);ctx.font=LF;let w=Math.max(...lines.map(l=>ctx.measureText(l).width));let ex=null;if(extra){ex=wrapLines(extra,LF2,d.hubRef.lw+10)[0];ctx.font=LF2;w=Math.max(w,ctx.measureText(ex).width)}d._lb={lines,ex,w,h:lines.length*14+(ex?13:0)}}return d._lb}
+function lbl(pc){const d=pc.d;const ms=bar.size?missOf(d):[];const extra=ms.length===1&&pc.hubRef.lw===84?t('no')+ingN(ms[0]).toLowerCase():'';const k=fontsOk+'|'+pc.hubRef.lw+'|'+extra;if(pc._lk!==k){pc._lk=k;const lines=wrapLines(nm(d),LF,pc.hubRef.lw);ctx.font=LF;let w=Math.max(...lines.map(l=>ctx.measureText(l).width));let ex=null;if(extra){ex=wrapLines(extra,LF2,pc.hubRef.lw+10)[0];ctx.font=LF2;w=Math.max(w,ctx.measureText(ex).width)}pc._lb={lines,ex,w,h:lines.length*14+(ex?13:0)}}return pc._lb}
 function hubLines(h,fs,r){const k=fs+'|'+Math.round(r)+'|'+fontsOk;if(h._k!==k){h._k=k;h._l=wrapLines(h.n,`600 ${fs}px "Roboto Condensed", Manrope, sans-serif`,r*2-12)}return h._l}
 function drawSky(){const g=ctx.createRadialGradient(W/2,H*.45,10,W/2,H*.5,Math.max(W,H)*.8);g.addColorStop(0,'#161D3A');g.addColorStop(.6,'#0B1020');g.addColorStop(1,'#05070F');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 SKY.neb.forEach(b=>{const x=((b.x*W+bgx*b.d)%W+W)%W,y=((b.y*H+bgy*b.d)%H+H)%H;const gg=ctx.createRadialGradient(x,y,0,x,y,b.r);gg.addColorStop(0,b.c);gg.addColorStop(1,'rgba(11,16,32,0)');ctx.globalAlpha=b.a;ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,b.r,0,7);ctx.fill()});
 ctx.fillStyle='#FFFFFF';SKY.stars.forEach(s=>{const x=((s.x*W+bgx*s.d*1.5)%W+W)%W,y=((s.y*H+bgy*s.d*1.5)%H+H)%H;ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(x,y,s.r,0,7);ctx.fill()});ctx.globalAlpha=1}
 function snapTo(h,k,roll){const r=norm(mv(M,h.tgt));let ax=cross(r,[0,0,1]);const sn=Math.hypot(...ax);const ang=Math.atan2(sn,r[2]);if(ang>1e-4){ax=sn<1e-6?[0,1,0]:ax.map(x=>x/sn);M=mm(axr(ax,ang*k),M)}
 if(roll){const mw=mv(M,h.w);const th=Math.atan2(-mw[0],-mw[1]);if(Math.abs(th)>1e-4)M=mm(axr([0,0,1],th*k),M)}ortho()}
-function syncUI(){document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 16px)':'calc(var(--sb) + 70px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
+function syncUI(){document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 34px)':'calc(var(--sb) + 88px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
 function panBound(){return focus&&focus.maxY?Math.max(0,focus.maxY-(H-SAFE_T-SAFE_B-124)/2):0}
 let panY=0,vpan=0;
 function zoomTo(z){zA=zoom;zB=z;zT0=performance.now()}
-function enter(h){if(!h)return;panY=0;vpan=0;focus=h;inGroup=true;zoomTo(ZF);sel=null;wx=wy=0;tilt=[0,0];haptic('sel');syncUI()}
+function enter(h){if(!h)return;panY=0;vpan=0;if(focus!==h)routeCache=new Map();focus=h;inGroup=true;zoomTo(ZF);sel=null;wx=wy=0;tilt=[0,0];haptic('sel');syncUI()}
 function exitGroup(){if(!inGroup)return;inGroup=false;zoomTo(1);tilt=[0,0];haptic('sel');syncUI()}
 function route(p,o,obs){const dx=o.x-p.x,dy=o.y-p.y,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,mx=(p.x+o.x)/2,my=(p.y+o.y)/2;
 for(const off of [0,24,-24,40,-40,58,-58,80,-80,104,-104]){const cx=mx+nx*off,cy=my+ny*off;let ok=true;for(let s=.06;s<.95&&ok;s+=.055){const u=1-s,x=u*u*p.x+2*u*s*cx+s*s*o.x,y=u*u*p.y+2*u*s*cy+s*s*o.y;
-for(const q of obs){if(q===o||q===p)continue;if(Math.hypot(q.x-x,q.y-y)<q.r+7){ok=false;break}if(q.lb&&x>q.lb[0]-4&&x<q.lb[0]+q.lb[2]+4&&y>q.lb[1]-3&&y<q.lb[1]+q.lb[3]+3){ok=false;break}}}if(ok)return[cx,cy]}return[mx,my]}
+for(const q of obs){if(q===o||q===p)continue;if(Math.hypot(q.x-x,q.y-y)<q.r+7){ok=false;break}if(q.lb&&x>q.lb[0]-4&&x<q.lb[0]+q.lb[2]+4&&y>q.lb[1]-3&&y<q.lb[1]+q.lb[3]+3){ok=false;break}}}if(ok)return[cx,cy,off]}return[mx,my,0]}
+/* Изгиб линии в открытой группе выбирается один раз, когда группа полностью раскрыта и неподвижна, и дальше не меняется — линии не «пляшут» при наклоне и прокрутке. */
+let routeCache=new Map();
+function routeFixed(pc,p,o,obs){const k=routeCache.get(pc);const dx=o.x-p.x,dy=o.y-p.y,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,mx=(p.x+o.x)/2,my=(p.y+o.y)/2;
+if(k!==undefined)return[mx+nx*k,my+ny*k];const c=route(p,o,obs);if(E>=.999&&!drag&&Math.abs(panY)<1&&Math.hypot(tilt[0],tilt[1])<.01)routeCache.set(pc,c[2]);return c}
 function frame(now){if(!W)size();
 const tt=clamp((now-zT0)/800,0,1);zoom=zA+(zB-zA)*easeIO(tt);E=clamp((zoom-1)/(ZF-1),0,1);
 hubs.forEach(h=>{h.pos=h.pos.map((x,i)=>x+(h.tgt[i]-x)*.08)});
@@ -523,13 +569,13 @@ if(hdr!==lastHdr){lastHdr=hdr;document.getElementById('gname').textContent=fh.n;
 const oa=1-.97*E,showL=E>.85?(E-.85)/.15:0;
 const nodes=[];
 hubs.forEach(h=>{const p=proj(h.pos,pv,R);const foc=h===focus;const a0=clamp((p.z+1.5)/2.1,.15,1);const al=foc?a0+(1-a0)*E:a0*oa;nodes.push({n:h,hub:1,x:p.x,y:p.y,z:p.z,foc,al,r:foc?HUB0+(HUB1-HUB0)*E:HUB0})});
-D.forEach(d=>{if(!d.hubRef)return;const p=proj(cpos(d),pv,R);const foc=d.hubRef===focus;const a0=clamp((p.z+1.5)/2.1,.15,1);let al=foc?a0+(1-a0)*E:a0*oa;let dim=1;if(!passes(d))dim=.14;else if(bar.size){const ms=missOf(d).length;dim=ms===0?1:ms===1?.62:.32}const o={n:d,x:p.x,y:p.y,z:p.z,foc,al:al*dim,dim,r:foc?DOT+(STAR-DOT)*E:DOT};o.ef=inGroup&&foc&&panBound()>0?clamp((o.y-SAFE_T-104)/50,0,1)*clamp((H-SAFE_B-80-o.y)/50,0,1):1;o.al*=o.ef;
-if(foc&&showL>0){const lb=lbl(d);const below=d.ly>=(d.par?d.par.ly:0)-12;const top=below?o.y+o.r+5:o.y-o.r-5-lb.h;o.lb=[o.x-lb.w/2,top,lb.w,lb.h];o.lbd=lb}nodes.push(o)});
-const NH=new Map();nodes.forEach(o=>{NH.set(o.n,o)});
+PL.forEach(pc=>{const d=pc.d;const p=proj(cpos(pc),pv,R);const foc=pc.hubRef===focus;const a0=clamp((p.z+1.5)/2.1,.15,1);let al=foc?a0+(1-a0)*E:a0*oa;let dim=1;if(!passes(d))dim=.14;else if(bar.size){const ms=missOf(d).length;dim=ms===0?1:ms===1?.62:.32}const o={n:d,pc,x:p.x,y:p.y,z:p.z,foc,al:al*dim,dim,r:foc?DOT+(STAR-DOT)*E:DOT};o.ef=inGroup&&foc&&panBound()>0?clamp((o.y-SAFE_T-104)/50,0,1)*clamp((H-SAFE_B-80-o.y)/50,0,1):1;o.al*=o.ef;
+if(foc&&showL>0){const lb=lbl(pc);const below=pc.ly>=(pc.par?pc.par.ly:0)-12;const top=below?o.y+o.r+5:o.y-o.r-5-lb.h;o.lb=[o.x-lb.w/2,top,lb.w,lb.h];o.lbd=lb}nodes.push(o)});
+const NH=new Map();nodes.forEach(o=>{NH.set(o.hub?o.n:o.pc,o)});
 drawSky();
 const FN=nodes.filter(o=>o.foc);lctx.clearRect(0,0,W,H);lctx.lineCap='round';
 hubs.forEach(h=>{const a=NH.get(h);h.nb.forEach(o=>{if(h.k>o.k&&o.nb.includes(h))return;const b=NH.get(o);const al=.1*Math.min(a.al,b.al)*(1-E);if(al<.005)return;lctx.globalAlpha=al;lctx.strokeStyle='#CECBF6';lctx.lineWidth=.6;lctx.beginPath();lctx.moveTo(a.x,a.y);lctx.lineTo(b.x,b.y);lctx.stroke()})});
-D.forEach(d=>{const o=NH.get(d);if(!o)return;const p=d.par?NH.get(d.par):NH.get(d.hubRef);const al=(o.foc?(.22+.3*E)*Math.max(o.dim,.4):.22*Math.min(o.al,p.al))*Math.min(o.ef,p.ef===undefined?1:p.ef);if(al<.005)return;lctx.globalAlpha=al;lctx.strokeStyle='#CECBF6';lctx.lineWidth=o.foc?.5+.3*E:.5;lctx.beginPath();lctx.moveTo(p.x,p.y);if(o.foc&&E>.3){const c=route(p,o,FN);lctx.quadraticCurveTo(c[0],c[1],o.x,o.y)}else lctx.lineTo(o.x,o.y);lctx.stroke()});
+PL.forEach(pc=>{const o=NH.get(pc);if(!o)return;const p=pc.par?NH.get(pc.par):NH.get(pc.hubRef);const al=(o.foc?(.22+.3*E)*Math.max(o.dim,.4):.22*Math.min(o.al,p.al))*Math.min(o.ef,p.ef===undefined?1:p.ef);if(al<.005)return;lctx.globalAlpha=al;lctx.strokeStyle='#CECBF6';lctx.lineWidth=o.foc?.5+.3*E:.5;lctx.beginPath();lctx.moveTo(p.x,p.y);if(o.foc&&E>.3){const c=routeFixed(pc,p,o,FN);lctx.quadraticCurveTo(c[0],c[1],o.x,o.y)}else lctx.lineTo(o.x,o.y);lctx.stroke()});
 lctx.globalAlpha=1;lctx.globalCompositeOperation='destination-out';lctx.fillStyle='#000';
 nodes.forEach(o=>{if(o.al<.03)return;lctx.beginPath();lctx.arc(o.x,o.y,o.r+(o.hub?6:4+2*E),0,7);lctx.fill();if(o.lb)lctx.fillRect(o.lb[0]-4,o.lb[1]-3,o.lb[2]+8,o.lb[3]+6)});
 lctx.globalCompositeOperation='source-over';ctx.drawImage(lc,0,0,W,H);
@@ -555,7 +601,7 @@ function up(e){const was=ptrs.size;ptrs.delete(e.pointerId);if(ptrs.size>0)retur
 function onTap(x,y){const N=window._nodes||[];const now=performance.now();
 if(inGroup){const hit=N.find(o=>o.foc&&!o.hub&&o.ef>.3&&(Math.hypot(o.x-x,o.y-y)<=Math.max(o.r+6,18)||(o.lb&&x>=o.lb[0]-4&&x<=o.lb[0]+o.lb[2]+4&&y>=o.lb[1]-3&&y<=o.lb[1]+o.lb[3]+3)));if(hit){lastTap.t=0;haptic();showCard(hit.n);return}}
 else{const hh=N.filter(o=>o.hub&&o.z>-.35).sort((a,c)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(c.x-x,c.y-y))[0];if(hh&&Math.hypot(hh.x-x,hh.y-y)<=hh.r+14){lastTap.t=0;enter(hh.n);return}
-const dd=N.filter(o=>!o.hub&&o.z>-.1).sort((a,c)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(c.x-x,c.y-y))[0];if(dd&&Math.hypot(dd.x-x,dd.y-y)<=16){lastTap.t=0;enter(dd.n.hubRef);return}}
+const dd=N.filter(o=>!o.hub&&o.z>-.1).sort((a,c)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(c.x-x,c.y-y))[0];if(dd&&Math.hypot(dd.x-x,dd.y-y)<=16){lastTap.t=0;enter(dd.pc.hubRef);return}}
 if(now-lastTap.t<330&&Math.hypot(x-lastTap.x,y-lastTap.y)<40){lastTap.t=0;inGroup?exitGroup():enter(frontHub());return}lastTap={t:now,x,y}}
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 let wheelLock=0;cv.addEventListener('wheel',e=>{e.preventDefault();const now=performance.now();if(now<wheelLock)return;if(!inGroup&&e.deltaY<-3){enter(frontHub());wheelLock=now+900}else if(inGroup&&panBound()>0&&!e.ctrlKey){panY=clamp(panY-e.deltaY,-panBound(),panBound())}else if(inGroup&&e.deltaY>3){exitGroup();wheelLock=now+900}},{passive:false});
@@ -563,17 +609,17 @@ function openSheet(html,tall){sheet.innerHTML='<div style="width:38px;height:4px
 function closeSheet(){if(cookT)clearInterval(cookT);cookT=null;cardOpen=false;ov.style.transition='opacity .16s';sheet.style.transition='transform .16s ease-in';ov.style.opacity=0;ov.style.pointerEvents='none';sheet.style.transform='translateY(40px)';syncUI()}
 ov.addEventListener('click',e=>{if(e.target===ov)closeSheet()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cardOpen)closeSheet()});
-if(tg){try{tg.ready();tg.expand();tg.disableVerticalSwipes&&tg.disableVerticalSwipes();tg.setHeaderColor&&tg.setHeaderColor('#0B1020');tg.setBackgroundColor&&tg.setBackgroundColor('#0B1020');tg.setBottomBarColor&&tg.isVersionAtLeast&&tg.isVersionAtLeast('7.10')&&tg.setBottomBarColor('#0B1020');tg.BackButton.onClick(()=>{if(cardOpen)closeSheet();else exitGroup()});['viewportChanged','safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'].forEach(ev=>{try{tg.onEvent(ev,()=>{size();fontsOk++;D.forEach(d=>d._lk=null)})}catch(e){}})}catch(e){}}
+if(tg){try{tg.ready();tg.expand();tg.disableVerticalSwipes&&tg.disableVerticalSwipes();tg.setHeaderColor&&tg.setHeaderColor('#0B1020');tg.setBackgroundColor&&tg.setBackgroundColor('#0B1020');tg.setBottomBarColor&&tg.isVersionAtLeast&&tg.isVersionAtLeast('7.10')&&tg.setBottomBarColor('#0B1020');tg.BackButton.onClick(()=>{if(cardOpen)closeSheet();else exitGroup()});['viewportChanged','safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'].forEach(ev=>{try{tg.onEvent(ev,()=>{size();fontsOk++;PL.forEach(q=>q._lk=null)})}catch(e){}})}catch(e){}}
 const head=(title,back,extra)=>`<div style="display:flex;gap:8px;align-items:flex-start">${back?`<button class="cl" id="back" aria-label="${t('back')}"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>`:''}<div style="flex:1;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;line-height:1.1;color:#F3F1FF">${title}</div>${extra||''}<button class="cl" data-close aria-label="${t('close')}"><i class="ti ti-x" aria-hidden="true"></i></button></div>`;
 function fCount(){return Object.values(F).filter(Boolean).length}
-function updCount(){const f=document.getElementById('fc'),l=document.getElementById('lc'),c=document.getElementById('fltc');f.textContent=fav.size;f.style.display=fav.size?'inline-flex':'none';l.textContent=lists.length;l.style.display=lists.length?'inline-flex':'none';const n=fCount()+(bar.size?1:0);c.textContent=n;c.style.display=n?'inline-flex':'none';D.forEach(d=>d._lk=null)}
+function updCount(){const f=document.getElementById('fc'),l=document.getElementById('lc'),c=document.getElementById('fltc');f.textContent=fav.size;f.style.display=fav.size?'inline-flex':'none';l.textContent=lists.length;l.style.display=lists.length?'inline-flex':'none';const n=fCount()+(bar.size?1:0);c.textContent=n;c.style.display=n?'inline-flex':'none';PL.forEach(q=>q._lk=null)}
 const chip=o=>`<button class="rc" data-i="${o.i}">${nm(o)}</button>`;
 function bindChips(){sheet.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>showCard(D[+b.dataset.i]))}
 function showCard(d){sel=d;const c=NC[B[d.b][1]];const rel=relOf(d);const parent=d.v?D.find(o=>o.n===d.v):null;const kids=D.filter(o=>o.v===d.n);const st=strength(d);
 const ings=d.ings.map(x=>`<div class="ir"><span>${ingN(x.a)}${bar.size&&!ALWAYS.has(x.a)&&!isOpt(x.am)&&bar.has(canon(x.a))?' <i class="ti ti-check" style="color:#97C459;font-size:14px" aria-label="'+t('home')+'"></i>':''}</span><span class="ld"></span><span class="am">${amtL(x.am)}</span></div>`).join('');
 const inL=lists.filter(l=>l.items.has(d.i));const isF=fav.has(d.i);const ms=bar.size?missOf(d):null;const note=noteOf(d);
 const favBtn=`<button class="cl" id="fav" aria-label="${t('favs')}" style="${isF?'background:rgba(255,92,176,.22);color:#FFB8DD':''}"><i class="ti ti-heart" aria-hidden="true"></i></button>`;
-openSheet(head(nm(d),false,favBtn)+`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span><span class="tg">${tName(d.t)}</span><span class="tg">${lName(d.l)}</span>${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src=='my'?'#EAD3A6':'#9997B8'}">${d.src=='my'?t('mine'):t('classic')}</span></div>
+openSheet(head(nm(d),false,favBtn)+`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span>${d.lx2.filter(k=>k!=='batch').map(k=>`<span class="tg">${lName(k)}</span>`).join('')}${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src=='my'?'#EAD3A6':'#9997B8'}">${d.src=='my'?t('mine'):t('classic')}</span></div>
 <div style="font-size:13px;color:#B9B7D6;margin-top:2px"><i class="ti ti-droplet" aria-hidden="true"></i> ${d.b==='zero'?t('zero'):'≈ '+st.abv+' %'} · ≈ ${st.vol} ${lang==='en'?'ml':'мл'}${d.g==='кувшин'?t('perPitcher'):''}</div>
 ${ms?`<div style="margin-top:10px;font-size:14px;padding:9px 12px;border-radius:12px;background:${ms.length?'rgba(255,122,61,.1)':'rgba(155,219,46,.12)'};color:${ms.length?'#FFC2A3':'#D6F59A'}">${ms.length?t('missing')+ms.map(x=>ingN(x).toLowerCase()).join(', '):t('canMake')}</div>`:''}
 <div style="margin-top:12px;display:flex;gap:8px"><button class="big" id="cook"><i class="ti ti-glass-full" style="font-size:18px" aria-hidden="true"></i>${t('cook')}</button><button class="sec" id="addl" style="height:46px;${inL.length?'color:#EAD3A6;border-color:rgba(234,211,166,.5)':''}"><i class="ti ti-${inL.length?'bookmark':'bookmark-plus'}" style="font-size:18px" aria-hidden="true"></i>${inL.length?t('inList'):t('toList')}</button></div>
@@ -666,7 +712,7 @@ sheet.querySelector('#back').onclick=showFilters;sheet.querySelector('#bd').oncl
 sheet.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const n=b.dataset.b;bar.has(n)?bar.delete(n):bar.add(n);b.classList.toggle('on',bar.has(n));sheet.querySelector('#bn').textContent=bar.size;updCount()})}
 function showRandom(){let pool=(inGroup&&focus?focus.items:D).filter(passes);if(!pool.length)pool=inGroup&&focus?focus.items:D;showCard(pool[Math.floor(Math.random()*pool.length)])}
 function applyStatic(){document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});document.getElementById('lng').textContent=lang==='ru'?'EN':'RU';document.getElementById('lng0').textContent=lang==='ru'?'English':'Русский';document.documentElement.lang=lang}
-function setLang(l){lang=l;applyStatic();fontsOk++;D.forEach(d=>d._lk=null);hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';if(cardOpen)closeSheet();updCount();haptic('sel')}
+function setLang(l){lang=l;applyStatic();fontsOk++;PL.forEach(q=>q._lk=null);hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';if(cardOpen)closeSheet();updCount();haptic('sel')}
 document.getElementById('lng').onclick=()=>setLang(lang==='ru'?'en':'ru');document.getElementById('lng0').onclick=()=>setLang(lang==='ru'?'en':'ru');
 document.getElementById('favs').onclick=showFavs;document.getElementById('mylists').onclick=showLists;document.getElementById('srch').onclick=showSearch;document.getElementById('rnd').onclick=showRandom;document.getElementById('flt').onclick=showFilters;
 let ageOk=false;
@@ -674,11 +720,12 @@ function hideAge(){ageOk=true;document.getElementById('age').style.display='none
 document.getElementById('age18').onclick=hideAge;
 document.getElementById('age0').onclick=()=>{F.zero=true;updCount();hideAge()};
 function step(dir){const cur=(inGroup&&focus)?focus:frontHub();const ang=h=>{const r=mv(M,h.tgt);return Math.atan2(r[0],r[2])};const a0=ang(cur);const others=hubs.filter(h=>h!==cur).map(h=>{let d=ang(h)-a0;while(d<=0)d+=2*Math.PI;return{h,d}}).sort((a,b)=>a.d-b.d);const pick=dir>0?others[0]:others[others.length-1];if(!pick)return;focus=pick.h;tilt=[0,0];wx=wy=0;haptic('sel')}
+document.getElementById('ig').onclick=e=>{if(tg&&tg.openLink){e.preventDefault();tg.openLink('https://www.instagram.com/ne.drozd/')}};
 document.getElementById('prev').onclick=()=>step(-1);document.getElementById('next').onclick=()=>step(1);
 document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m;build()});
-window.addEventListener('resize',()=>{size();fontsOk++;D.forEach(d=>d._lk=null)});
+window.addEventListener('resize',()=>{size();fontsOk++;PL.forEach(q=>q._lk=null)});
 applyStatic();size();build();updCount();requestAnimationFrame(frame);
-if(document.fonts)document.fonts.ready.then(()=>{fontsOk++;D.forEach(d=>d._lk=null)});
+if(document.fonts)document.fonts.ready.then(()=>{fontsOk++;PL.forEach(q=>q._lk=null)});
 /* ===== Сохранение: у каждого пользователя свои данные =====
    В Telegram — CloudStorage (привязано к аккаунту и боту, синхронизируется между устройствами).
    В обычном браузере — localStorage. Коктейли сохраняются по названию, чтобы порядок базы можно было менять. */
@@ -722,6 +769,6 @@ function sameItems(a,b){if(a.size!==b.size)return false;for(const[k,v]of a)if(b.
 function afterAge(){if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;
 if(!lists.some(l=>sameItems(l.items,items))){const vals=[...items.values()];lists.push({id:lid++,name:t('sharedList'),items,shop:false,def:vals.every(v=>v===vals[0])?vals[0]:4})}
 updCount();showLists()}
-loadAll().then(age=>{applyStatic();hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;D.forEach(d=>d._lk=null);updCount();if(age||ageOk)hideAge()}).catch(()=>{loaded=true});
+loadAll().then(age=>{applyStatic();hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;PL.forEach(q=>q._lk=null);updCount();if(age||ageOk)hideAge()}).catch(()=>{loaded=true});
 </script>
 </body></html>
