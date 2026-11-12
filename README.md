@@ -5,4 +5,4 @@ Telegram-мини-приложение для подбора коктейлей 
 - Бот: [@whattodrinkuh_bot](https://t.me/whattodrinkuh_bot)
 - Всё приложение — один файл `index.html`, сборка не нужна.
 - Личные данные (избранное, списки, бар, заметки, язык) хранятся у каждого пользователя в Telegram CloudStorage, вне Telegram — в localStorage браузера.
-- Ссылка «Поделиться» открывает приложение с готовым меню: `https://t.me/whattodrinkuh_bot/app?startapp=m_…`
+- Ссылка «Поделиться» открывает приложение с готовым меню: `https://t.me/whattodrinkuh_bot?startapp=m_…`
