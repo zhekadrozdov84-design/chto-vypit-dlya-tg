@@ -41,7 +41,7 @@ button{font:inherit}
 <button class="g ib" id="next" aria-label="Следующая группа"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
 </div>
 <button class="g pl" id="lng" style="position:absolute;right:14px;top:calc(var(--st) + var(--ct) + 72px);height:32px;font-size:13px;font-weight:600;padding:0 12px;letter-spacing:.04em">EN</button>
-<div id="brow" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 88px);display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:bottom .5s cubic-bezier(.4,0,.2,1)">
+<div id="brow" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 70px);display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:bottom .5s cubic-bezier(.4,0,.2,1)">
 <div style="display:flex;gap:7px">
 <button class="g pl" id="favs" style="color:#F4C0D1"><i class="ti ti-heart" style="font-size:18px" aria-hidden="true"></i><span data-t="favs">Избранное</span><span class="cnt" id="fc" style="background:#F4C0D1;color:#4B1528"></span></button>
 <button class="g pl" id="mylists" style="color:#EAD3A6"><i class="ti ti-bookmarks" style="font-size:18px" aria-hidden="true"></i><span data-t="lists">Списки</span><span class="cnt" id="lc" style="background:#EAD3A6;color:#1A1330"></span></button>
@@ -52,10 +52,10 @@ button{font:inherit}
 <button class="g ib" id="rnd" aria-label="Случайный коктейль"><i class="ti ti-dice-5" aria-hidden="true"></i></button>
 </div>
 </div>
-<div id="segw" class="g" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 34px);border-radius:15px;padding:4px;display:flex;gap:4px;transition:opacity .4s">
+<div id="segw" class="g" style="position:absolute;left:12px;right:12px;bottom:calc(var(--sb) + 16px);border-radius:15px;padding:4px;display:flex;gap:4px;transition:opacity .4s">
 <button class="seg on" data-m="b" data-t="segB">Основа</button><button class="seg" data-m="t" data-t="segT">Вкус</button><button class="seg" data-m="l" data-t="segL">Сложность</button>
 </div>
-<a id="ig" href="https://www.instagram.com/ne.drozd/" target="_blank" rel="noopener" aria-label="Instagram ne.drozd" style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 8px);height:20px;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:12px;letter-spacing:.02em;color:#9997B8;text-decoration:none"><i class="ti ti-brand-instagram" style="font-size:15px" aria-hidden="true"></i>ne.drozd</a>
+<a id="ig" href="https://www.instagram.com/ne.drozd/" target="_blank" rel="noopener" aria-label="Instagram ne.drozd" style="position:absolute;left:50%;transform:translateX(-50%);bottom:var(--sb);height:16px;display:flex;align-items:center;gap:4px;padding:0 6px;font-size:10px;line-height:1;letter-spacing:.02em;color:#7E7C9E;text-decoration:none"><i class="ti ti-brand-instagram" style="font-size:11px" aria-hidden="true"></i>ne.drozd</a>
 <div id="ov" style="position:absolute;inset:0;background:rgba(4,6,14,.62);opacity:0;pointer-events:none;transition:opacity .22s;display:flex;align-items:flex-end">
 <div id="sheet" role="dialog" aria-label="Панель" style="width:100%;max-height:calc(100% - var(--st) - var(--ct) - 24px);overflow:auto;background:#10142A;border-top:0.5px solid rgba(220,225,255,.14);border-radius:22px 22px 0 0;padding:14px 20px calc(var(--sb) + 24px);color:#EEEDFE;transform:translateY(40px);transition:transform .25s cubic-bezier(.2,.9,.3,1);box-sizing:border-box"></div>
 </div>
@@ -224,7 +224,7 @@ const GL_EN={'коктейльная рюмка':'cocktail glass','лоубол'
 const AM_EN=[['несколько капель','a few drops'],['несколько листьев','a few leaves'],['(по желанию)','(optional)'],['для ополаскивания','to rinse'],['для посыпки','to sprinkle'],['для подачи','to garnish'],['по вкусу','to taste'],['щепотка','a pinch'],['долить','top up'],['долька','wedge'],['веточек','sprigs'],['листьев','leaves'],['ломтика','slices'],['палочки','sticks'],['палочка','stick'],['бутонов','cloves'],['бутона','cloves'],['звёздочки','star anise'],['ч. л.','tsp'],['ст. л.','tbsp'],['дэша','dashes'],['дэш','dash'],['капли','drops'],['слой','layer'],['шапка','topping'],['шт','pc'],[/(\d) л$/,'$1 l'],[/(\d) г$/,'$1 g']];
 const BE={vodka:'Vodka',gin:'Gin',rum:'Rum & cachaça',teq:'Tequila & mezcal',whisky:'Whisky',brandy:'Cognac & brandy',wine:'Sparkling & wine',liq:'Liqueurs & aperitifs',zero:'Alcohol-free'};
 const TE={sweet:'Sweet',sour:'Sour',fruit:'Fruity',creamy:'Creamy & dessert',coffee:'Coffee',bitter:'Bitter',fresh:'Refreshing',herbal:'Spicy & herbal',strong:'Spirit-forward',hot:'Warming'};
-const LE={1:'Pour & stir',2:'Shaken',3:'Stirred',4:'For pros',few:'Few ingredients',many:'Many ingredients',batch:'For a crowd'};
+const LE={1:'Pour & stir',2:'Shaken',3:'Stirred',4:'For pros',few:'Few ingredients',many:'Many ingredients',batch:'For a crowd',prep:'Make ahead',classic:'Classics'};
 const STR={ru:{appTitle:'Что пьём?',appSub:'мини-приложение',close:'Закрыть',favs:'Избранное',lists:'Списки',segB:'Основа',segT:'Вкус',segL:'Сложность',
 ageText:'Здесь рецепты алкогольных напитков. Подтвердите, что вам уже исполнилось 18 лет.',age18:'Мне есть 18',age0:'Только безалкогольные',
 subOv:'крутите небо · коснитесь созвездия',subG:'двойной тап или щипок — назад',subScroll:'листайте · щипок — назад',steps:'Как готовить',no:'нет: ',
@@ -407,8 +407,8 @@ const NC={blue:['#A8D4FF','#4DA3FF','#0B3D73','#062240'],teal:['#9FF0D2','#2ED3A
 const B={vodka:['Водка','blue'],gin:['Джин','teal'],rum:['Ром и кашаса','amber'],teq:['Текила и мескаль','green'],whisky:['Виски','coral'],brandy:['Коньяк и бренди','red'],wine:['Игристое и вино','purple'],liq:['Ликёры и аперитивы','pink'],zero:['Без алкоголя','gray']};
 const T={sweet:'Сладкие',sour:'Кислые',fruit:'Фруктовые',creamy:'Сливочные и десертные',coffee:'Кофейные',bitter:'Горькие',fresh:'Освежающие',herbal:'Пряные и травяные',strong:'Крепкие',hot:'Согревающие'};
 const TC={sweet:'yellow',sour:'green',fruit:'pink',creamy:'gray',coffee:'amber',bitter:'coral',fresh:'teal',herbal:'purple',strong:'blue',hot:'red'};
-const L={1:'Налить и смешать',2:'Шейкер',3:'Смесительный стакан',4:'Для профи',few:'Малосоставные',many:'Многосоставные',batch:'На компанию'};
-const LC={1:'teal',2:'amber',3:'purple',4:'coral',few:'green',many:'pink',batch:'blue'};
+const L={1:'Налить и смешать',2:'Шейкер',3:'Смесительный стакан',4:'Для профи',few:'Малосоставные',many:'Многосоставные',batch:'На компанию',prep:'Готовятся заранее',classic:'Классика'};
+const LC={1:'teal',2:'amber',3:'purple',4:'coral',few:'green',many:'pink',batch:'blue',prep:'yellow',classic:'red'};
 const D=RAW.concat(RAW2).map(([n,b,t,l,g,ing,m,note,bt,src,v],i)=>({i,n,b,t,l,g,ing,m,note,bt,src,v,ings:ing.split(';').map(s=>{const[a,am]=s.split('|');return{a,am}})}));
 Object.entries(EN2).forEach(([k,v])=>{EN[k]=[v[0],'',v[1]]});EN['Last word'][0]='Last Word (rum)';
 D.forEach(d=>{d.sp=parseSp(SP[d.n]);d.l=d.sp.tech==='custom'?+(d.sp.f.L||2):(LVL[d.sp.tech]||2);if(d.n==='Last word')d.v='Последнее слово';if(d.n==='Кир рояль')d.v='Кир'});
@@ -491,7 +491,12 @@ let ts=[d.t,...TASTE_ORDER.filter(k=>k!==d.t&&pick.includes(k))].slice(0,3);
 if(TASTE_FIX[d.n])ts=TASTE_FIX[d.n];d.ts=ts;
 /* сложность: техника + число ингредиентов + на компанию */
 const cnt=d.ings.filter(x=>!/для подачи|по вкусу|по желанию|для ополаскивания|для посыпки/.test(x.am)&&!/^(Лёд|Вода|Кипяток|Соль|Соль и перец)$/.test(x.a)).length;
-d.cnt=cnt;d.lx2=[];if(cnt<=3)d.lx2.push('few');if(cnt>=6)d.lx2.push('many');if(d.bt||d.g==='кувшин')d.lx2.push('batch')})}
+d.cnt=cnt;d.lx2=[];if(cnt<=3)d.lx2.push('few');if(cnt>=6)d.lx2.push('many');if(d.bt||d.g==='кувшин')d.lx2.push('batch');if(PREP_RE.test(d.ing)||PREP_N.has(d.n))d.lx2.push('prep');if(d.src!=='my'||CLASSIC_MY.has(d.n))d.lx2.push('classic')})}
+/* «Готовятся заранее»: домашние сиропы/кордиалы, холодный чай, настаивание и охлаждение. */
+const PREP_RE=/Медово-имбирный сироп|Медовый сироп|Малиновый сироп|Сироп корицы|Ромашковый кордиал|Ананасовый сироп|Ванильный сироп|Холодный зелёный чай/;
+const PREP_N=new Set(['Сангрия','Огуречный лимонад']);
+/* «Классика»: классические и IBA-коктейли из базы + рецепты пользователя, которые сами по себе классика. */
+const CLASSIC_MY=new Set(['Эспрессо мартини','Апероль шприц','Сайдкар','White lady','Пина колада','Bee’s knees','Космополитен','Дайкири','French 75','Basil smash','Джин физз','Московский мул','Мохито','Морской бриз','Секс на пляже','South side','Горячий тодди','Бульвардье','Негрони','Оргазм']);
 function glassType(g){if(/кружка|ирланд/.test(g))return'mug';if(/кувшин/.test(g))return'pitch';if(/хайбол/.test(g))return'high';if(/мартинка|рюмка/.test(g))return'mart';if(/купе|маргаритка/.test(g))return'coupe';if(/флюте/.test(g))return'flute';if(/шот/.test(g))return'shot';if(/винный/.test(g))return'wine';if(/рокс|лоубол/.test(g))return'rocks';return''}
 function drawGlass(t,x,y,s,col){ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
 if(t==='rocks'){ctx.moveTo(x-s*.55,y-s*.45);ctx.lineTo(x-s*.5,y+s*.5);ctx.lineTo(x+s*.5,y+s*.5);ctx.lineTo(x+s*.55,y-s*.45)}
@@ -508,7 +513,7 @@ ctx.stroke()}
 function size(){DPR=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);lc.width=W*DPR;lc.height=H*DPR;lctx.setTransform(DPR,0,0,DPR,0,0);
 SAFE_T=Math.max(0,document.getElementById('hdr').offsetTop-12);SAFE_B=Math.max(0,(parseFloat(getComputedStyle(document.getElementById('segw')).bottom)||16)-16);lastHdr='';routeCache=new Map()}
 const keysOf=d=>mode=='b'?[d.b]:mode=='t'?d.ts:[d.l,...d.lx2];
-const KORDER={t:Object.keys(T),l:[1,2,3,4,'few','many','batch']};
+const KORDER={t:Object.keys(T),l:[1,2,3,4,'few','many','batch','prep','classic']};
 const glabel=k=>mode=='b'?bName(k):mode=='t'?tName(k):lName(k);
 const gcol=k=>mode=='b'?B[k][1]:mode=='t'?TC[k]:LC[k];
 const plural=n=>t('plural')(n);
@@ -543,7 +548,7 @@ SKY.neb.forEach(b=>{const x=((b.x*W+bgx*b.d)%W+W)%W,y=((b.y*H+bgy*b.d)%H+H)%H;co
 ctx.fillStyle='#FFFFFF';SKY.stars.forEach(s=>{const x=((s.x*W+bgx*s.d*1.5)%W+W)%W,y=((s.y*H+bgy*s.d*1.5)%H+H)%H;ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(x,y,s.r,0,7);ctx.fill()});ctx.globalAlpha=1}
 function snapTo(h,k,roll){const r=norm(mv(M,h.tgt));let ax=cross(r,[0,0,1]);const sn=Math.hypot(...ax);const ang=Math.atan2(sn,r[2]);if(ang>1e-4){ax=sn<1e-6?[0,1,0]:ax.map(x=>x/sn);M=mm(axr(ax,ang*k),M)}
 if(roll){const mw=mv(M,h.w);const th=Math.atan2(-mw[0],-mw[1]);if(Math.abs(th)>1e-4)M=mm(axr([0,0,1],th*k),M)}ortho()}
-function syncUI(){document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 34px)':'calc(var(--sb) + 88px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
+function syncUI(){document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 16px)':'calc(var(--sb) + 70px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
 function panBound(){return focus&&focus.maxY?Math.max(0,focus.maxY-(H-SAFE_T-SAFE_B-124)/2):0}
 let panY=0,vpan=0;
 function zoomTo(z){zA=zoom;zB=z;zT0=performance.now()}
@@ -619,7 +624,7 @@ function showCard(d){sel=d;const c=NC[B[d.b][1]];const rel=relOf(d);const parent
 const ings=d.ings.map(x=>`<div class="ir"><span>${ingN(x.a)}${bar.size&&!ALWAYS.has(x.a)&&!isOpt(x.am)&&bar.has(canon(x.a))?' <i class="ti ti-check" style="color:#97C459;font-size:14px" aria-label="'+t('home')+'"></i>':''}</span><span class="ld"></span><span class="am">${amtL(x.am)}</span></div>`).join('');
 const inL=lists.filter(l=>l.items.has(d.i));const isF=fav.has(d.i);const ms=bar.size?missOf(d):null;const note=noteOf(d);
 const favBtn=`<button class="cl" id="fav" aria-label="${t('favs')}" style="${isF?'background:rgba(255,92,176,.22);color:#FFB8DD':''}"><i class="ti ti-heart" aria-hidden="true"></i></button>`;
-openSheet(head(nm(d),false,favBtn)+`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span>${d.lx2.filter(k=>k!=='batch').map(k=>`<span class="tg">${lName(k)}</span>`).join('')}${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src=='my'?'#EAD3A6':'#9997B8'}">${d.src=='my'?t('mine'):t('classic')}</span></div>
+openSheet(head(nm(d),false,favBtn)+`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span>${d.lx2.filter(k=>k!=='batch'&&k!=='classic').map(k=>`<span class="tg">${lName(k)}</span>`).join('')}${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src=='my'?'#EAD3A6':'#9997B8'}">${d.src=='my'?t('mine'):t('classic')}</span></div>
 <div style="font-size:13px;color:#B9B7D6;margin-top:2px"><i class="ti ti-droplet" aria-hidden="true"></i> ${d.b==='zero'?t('zero'):'≈ '+st.abv+' %'} · ≈ ${st.vol} ${lang==='en'?'ml':'мл'}${d.g==='кувшин'?t('perPitcher'):''}</div>
 ${ms?`<div style="margin-top:10px;font-size:14px;padding:9px 12px;border-radius:12px;background:${ms.length?'rgba(255,122,61,.1)':'rgba(155,219,46,.12)'};color:${ms.length?'#FFC2A3':'#D6F59A'}">${ms.length?t('missing')+ms.map(x=>ingN(x).toLowerCase()).join(', '):t('canMake')}</div>`:''}
 <div style="margin-top:12px;display:flex;gap:8px"><button class="big" id="cook"><i class="ti ti-glass-full" style="font-size:18px" aria-hidden="true"></i>${t('cook')}</button><button class="sec" id="addl" style="height:46px;${inL.length?'color:#EAD3A6;border-color:rgba(234,211,166,.5)':''}"><i class="ti ti-${inL.length?'bookmark':'bookmark-plus'}" style="font-size:18px" aria-hidden="true"></i>${inL.length?t('inList'):t('toList')}</button></div>
