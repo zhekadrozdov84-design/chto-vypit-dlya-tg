@@ -412,7 +412,7 @@ const D=RAW.concat(RAW2).map(([n,b,t,l,g,ing,m,note,bt,src,v],i)=>({i,n,b,t,l,g,
 Object.entries(EN2).forEach(([k,v])=>{EN[k]=[v[0],'',v[1]]});EN['Last word'][0]='Last Word (rum)';
 D.forEach(d=>{d.sp=parseSp(SP[d.n]);d.l=d.sp.tech==='custom'?+(d.sp.f.L||2):(LVL[d.sp.tech]||2);if(d.n==='Last word')d.v='Последнее слово';if(d.n==='Кир рояль')d.v='Кир'});
 const tg=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData?window.Telegram.WebApp:null;
-const BOT_URL='https://t.me/whattodrinkuh_bot';
+const BOT_URL='https://t.me/whattodrinkuh_bot/app';
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),ov=document.getElementById('ov'),sheet=document.getElementById('sheet');
 const lc=document.createElement('canvas'),lctx=lc.getContext('2d');
 let W,H,DPR=1,SAFE_T=0,SAFE_B=0,mode='b',hubs=[],M=[[1,0,0],[0,1,0],[0,0,1]],wx=0,wy=0,drag=false,focus=null,sel=null,lastHdr='',zoom=1,zA=1,zB=1,zT0=0,inGroup=false,tilt=[0,0],cardOpen=false,lists=[],lid=1,bgx=0,bgy=0,fontsOk=0,E=0;
@@ -715,7 +715,7 @@ lists=pj(v.wtd_lists,[]).map(l=>({id:+l.id||0,name:String(l.name||'').slice(0,40
 lid=Math.max(0,...lists.map(l=>l.id))+1;
 Object.entries(pj(v.wtd_notes,{})).forEach(([n,txt])=>{const d=BYNAME.get(n);if(d&&txt)notes[d.i]=String(txt)});
 saved=snap();KEYS.forEach(k=>{if((v[k]||'')==='')saved[k]=''});loaded=true;return !!p.age}
-/* ===== Открытие по ссылке «Поделиться»: t.me/whattodrinkuh_bot?startapp=m_… ===== */
+/* ===== Открытие по ссылке «Поделиться»: t.me/whattodrinkuh_bot/app?startapp=m_… ===== */
 function startParam(){let s='';try{s=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||''}catch(e){}if(!s){const q=new URLSearchParams(location.search);s=q.get('tgWebAppStartParam')||q.get('startapp')||''}return s}
 let pendingMenu=null;(()=>{const s=startParam();if(!/^m_[0-9a-z]+x\d+(-[0-9a-z]+x\d+)*$/.test(s))return;const items=new Map();s.slice(2).split('-').forEach(p=>{const[a,b]=p.split('x');const i=parseInt(a,36);if(D[i])items.set(i,clamp(+b||1,1,99))});if(items.size)pendingMenu=items})();
 function sameItems(a,b){if(a.size!==b.size)return false;for(const[k,v]of a)if(b.get(k)!==v)return false;return true}
