@@ -785,7 +785,7 @@ function fCount(){return FLw().filter(k=>F[k]).length}
 function updCount(){const f=document.getElementById('fc'),l=document.getElementById('lc'),c=document.getElementById('fltc');f.textContent=fav.size;f.style.display=fav.size?'inline-flex':'none';l.textContent=lists.length;l.style.display=lists.length?'inline-flex':'none';const n=fCount()+(bar.size?1:0);c.textContent=n;c.style.display=n?'inline-flex':'none';PL.forEach(q=>q._lk=null)}
 const chip=o=>`<button class="rc" data-i="${o.i}">${nm(o)}</button>`;
 function bindChips(){sheet.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>showCard(D[+b.dataset.i]))}
-function showCard(d){sel=d;const c=NC[B[d.b][1]];const rel=relOf(d);const parent=d.v?D.find(o=>o.n===d.v):null;const kids=D.filter(o=>o.v===d.n);const st=strength(d);
+function showCard(d){if(sel!==d||!cardOpen)track('card_open',{item:d.n,kind:d.nk?'настойка':'коктейль',own:d.src==='user'?'да':'нет'});sel=d;const c=NC[B[d.b][1]];const rel=relOf(d);const parent=d.v?D.find(o=>o.n===d.v):null;const kids=D.filter(o=>o.v===d.n);const st=strength(d);
 const ings=d.ings.map(x=>ingRow(x,d)).join('');
 const inL=lists.filter(l=>l.items.has(d.i));const isF=fav.has(d.i);const ms=bar.size?missOf(d):null;const note=noteOf(d);
 const favBtn=`<button class="cl" id="fav" aria-label="${t('favs')}" style="${isF?'background:rgba(255,92,176,.22);color:#FFB8DD':''}"><i class="ti ti-heart" aria-hidden="true"></i></button>`;
@@ -802,7 +802,7 @@ ${kids.length?`<div class="lab">${t('vars')}</div><div style="margin-top:8px;dis
 ${rel.length?`<div class="lab">${d.nk?(lang==='en'?'More infusions':'Ещё настойки'):t('also')+(mode=='b'?tName(d.t):bName(d.b)).toLowerCase()}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${rel.map(chip).join('')}</div>`:''}`);
 sheet.querySelector('#addl').onclick=()=>showAdd(d);const ec=sheet.querySelector('#edc');if(ec)ec.onclick=()=>showEditor(d);sheet.querySelector('#cook').onclick=()=>showCook(d,0);sheet.querySelector('#fav').onclick=()=>{isF?fav.delete(d.i):fav.add(d.i);haptic();updCount();showCard(d)};sheet.querySelector('#nt').oninput=e=>{const v=e.target.value;if(v)notes[d.i]=v;else delete notes[d.i]};bindChips()}
 let cookT=null;
-function showCook(d,step){if(cookT){clearInterval(cookT);cookT=null}const stp=steps(d);const total=stp.length+1;
+function showCook(d,step){if(step===0)track('cook_start',{item:d.n});if(cookT){clearInterval(cookT);cookT=null}const stp=steps(d);const total=stp.length+1;
 let body;if(step===0){body=`<div style="font-size:15px;color:#B9B7D6;margin-bottom:6px">${t('prep')}</div>${d.ings.map((x,i)=>`<div class="row" data-ck="${i}" style="font-size:19px"><i class="ti ti-circle" style="font-size:24px;color:#6F6D8E" aria-hidden="true"></i><span style="flex:1">${ingN(x.a)}</span><span style="color:#EAD3A6;font-size:18px;white-space:nowrap">${amtL(x.am)}</span></div>`).join('')}${d.g?`<div style="margin-top:12px;font-size:15px;color:#B9B7D6">${t('glass')}${glN(d.g)}</div>`:''}`}
 else{const s=stp[step-1];body=`<div style="font-size:23px;line-height:1.5;color:#F3F1FF;padding:18px 0">${s}</div>${!d.nk&&/встряхив|shake/i.test(s)?`<button class="sec" id="tmr" style="width:100%;height:52px;font-size:16px"><i class="ti ti-clock" aria-hidden="true"></i>${t('timer')}</button>`:''}`}
 openSheet(head(nm(d),true)+`<div style="font-size:12px;color:#8E8CAE;margin-top:6px">${t('bm')} ${step+1} ${t('of')} ${total}</div><div style="height:3px;border-radius:2px;background:rgba(220,225,255,.1);margin-top:8px"><div style="height:3px;border-radius:2px;background:#EAD3A6;width:${(step+1)/total*100}%"></div></div><div style="margin-top:12px;min-height:300px">${body}</div><div style="display:flex;gap:8px;margin-top:16px">${step>0?`<button class="sec" id="pv" style="height:52px;flex:none;width:110px">${t('back')}</button>`:''}<button class="big" id="nx" style="height:52px">${step+1<total?t('next'):t('done')}</button></div>`,true);
@@ -812,11 +812,11 @@ const tm=sheet.querySelector('#tmr');if(tm)tm.onclick=()=>{if(cookT)return;let s
 /* Звук таймера: короткие тики каждую секунду, последние три — выше, в конце двойной сигнал. Web Audio, без файлов. */
 let AC=null;function beep(f,dur,vol){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,AC.currentTime);g.gain.linearRampToValueAtTime(vol,AC.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+dur);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+dur+.02)}catch(e){}}
 function newListForm(id){return`<div style="display:flex;gap:8px;margin-top:10px"><input class="din" id="${id}" placeholder="${t('listPh')}" maxlength="40"><button class="sec" id="${id}b"><i class="ti ti-plus" aria-hidden="true"></i>${t('create')}</button></div><div id="${id}e" style="font-size:13px;color:#FF8A95;margin-top:6px"></div>`}
-function bindNew(id,onDone){const inp=sheet.querySelector('#'+id),err=sheet.querySelector('#'+id+'e');const go=()=>{const v=inp.value.trim();if(!v){err.textContent=t('enterName');inp.focus();return}const l={id:lid++,name:v,items:new Map(),shop:false,def:4};lists.push(l);updCount();onDone(l)};sheet.querySelector('#'+id+'b').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};inp.oninput=()=>{err.textContent=''}}
+function bindNew(id,onDone){const inp=sheet.querySelector('#'+id),err=sheet.querySelector('#'+id+'e');const go=()=>{const v=inp.value.trim();if(!v){err.textContent=t('enterName');inp.focus();return}const l={id:lid++,name:v,items:new Map(),shop:false,def:4};lists.push(l);track('list_create');updCount();onDone(l)};sheet.querySelector('#'+id+'b').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};inp.oninput=()=>{err.textContent=''}}
 function showAdd(d){openSheet(head(t('whichList'),true)+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${nm(d)}</div><div style="margin-top:8px">${lists.length?lists.map(l=>{const on=l.items.has(d.i);return`<div class="row" data-l="${l.id}"><i class="ti ${on?'ti-circle-check':'ti-circle'}" style="font-size:24px;color:${on?'#EAD3A6':'#6F6D8E'}" aria-hidden="true"></i><span style="flex:1">${esc(l.name)}</span><span style="font-size:13px;color:#8E8CAE">${l.items.size}</span></div>`}).join(''):`<div style="font-size:14px;color:#B9B7D6;padding:8px 0;line-height:1.6">${t('noLists')}</div>`}</div>
 <div class="lab">${t('newList')}</div>${newListForm('nl')}<div style="margin-top:16px;display:flex"><button class="big" id="done">${t('done')}</button></div>`);
 sheet.querySelector('#back').onclick=()=>showCard(d);sheet.querySelector('#done').onclick=()=>showCard(d);
-sheet.querySelectorAll('[data-l]').forEach(r=>r.onclick=()=>{const l=lists.find(x=>x.id==r.dataset.l);l.items.has(d.i)?l.items.delete(d.i):l.items.set(d.i,d.nk?1:l.def);haptic();showAdd(d)});
+sheet.querySelectorAll('[data-l]').forEach(r=>r.onclick=()=>{const l=lists.find(x=>x.id==r.dataset.l);l.items.has(d.i)?l.items.delete(d.i):(l.items.set(d.i,d.nk?1:l.def),track('list_add',{item:d.n}));haptic();showAdd(d)});
 bindNew('nl',l=>{l.items.set(d.i,d.nk?1:l.def);showAdd(d)})}
 const fmtNum=x=>String(x).replace('.',t('dec'));
 const fmtMl=ml=>{const u=lang==='en'?['l','ml']:['л','мл'];return ml>=1000?fmtNum(Math.round(ml/100)/10)+' '+u[0]:Math.round(ml)+' '+u[1]};
@@ -867,7 +867,7 @@ sheet.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>showShare(L_(b.d
 function shareLink(l){return BOT_URL+'?startapp=m_'+[...l.items.entries()].filter(([i])=>D[i].src!=='user').map(([i,k])=>i.toString(36)+'x'+k).join('-')}
 function showShare(l){const link=shareLink(l);
 openSheet(head(t('shareT'),true)+`<div style="font-size:15px;color:#B9B7D6;line-height:1.6;margin-top:8px">${t('shareD')(esc(l.name))}</div><div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(220,225,255,.06);font-size:13px;color:#EAD3A6;word-break:break-all">${esc(link)}</div><div style="margin-top:12px;display:flex"><button class="big" id="cp"><i class="ti ti-${tg?'send':'copy'}" aria-hidden="true"></i>${t('copy')}</button></div><div id="cpm" style="font-size:13px;color:#9BDB2E;margin-top:8px;min-height:18px"></div>`);
-sheet.querySelector('#back').onclick=showLists;sheet.querySelector('#cp').onclick=()=>{const m=sheet.querySelector('#cpm');const txt=listText(l);if(tg&&tg.openTelegramLink){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(txt+'\n\n'+t('shareText')));return}try{navigator.clipboard.writeText(txt+'\n\n'+t('shareText')+'\n'+link).then(()=>{m.textContent=t('copied')},()=>{m.textContent=t('copyFail')})}catch(e){m.textContent=t('copyFail')}}}
+sheet.querySelector('#back').onclick=showLists;sheet.querySelector('#cp').onclick=()=>{track('share',{items:l.items.size});const m=sheet.querySelector('#cpm');const txt=listText(l);if(tg&&tg.openTelegramLink){tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(txt+'\n\n'+t('shareText')));return}try{navigator.clipboard.writeText(txt+'\n\n'+t('shareText')+'\n'+link).then(()=>{m.textContent=t('copied')},()=>{m.textContent=t('copyFail')})}catch(e){m.textContent=t('copyFail')}}}
 const rowHtml=d=>`<div class="row" data-i="${d.i}"><span style="width:10px;height:10px;border-radius:50%;background:${NC[B[d.b][1]][1]};flex:none"></span><span style="flex:1">${nm(d)}</span><span style="font-size:12px;color:#8E8CAE">${bName(d.b)}</span></div>`;
 function showFavs(){const f=[...fav].map(i=>D[i]).filter(d=>!d.hidden);openSheet(head(t('favs'))+(f.length?`<div style="margin-top:8px">${f.map(rowHtml).join('')}</div>`:`<div style="font-size:15px;color:#B9B7D6;margin-top:12px;line-height:1.65">${t('favEmpty')}</div>`));bindChips()}
 /* поиск — в 06b-extra.js */
@@ -876,13 +876,13 @@ function showFilters(){const FL=FLw();const canN=bar.size?D.filter(d=>!d.hidden&
 openSheet(head(t('filters'))+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${t(world==='n'?'filtHintN':'filtHint')}</div><div style="margin-top:12px;display:flex;flex-wrap:wrap">${FL.map(k=>`<button class="tgl${F[k]?' on':''}" data-f="${k}">${t('f_'+k)}</button>`).join('')}</div>${F.can&&!bar.size?`<div style="font-size:13px;color:#FFC2A3;margin-top:2px">${t('barFirst')}</div>`:''}
 <div class="lab">${t('myBar')}</div><div style="margin-top:8px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)"><div style="font-size:15px;line-height:1.55;color:#DCDAF0">${bar.size?t('barStat')(bar.size,canN,pluralW(canN)):t(world==='n'?'barIntroN':'barIntro')}</div><div style="margin-top:10px;display:flex;gap:8px"><button class="big" id="barb"><i class="ti ti-bottle" aria-hidden="true"></i>${bar.size?t('barEdit'):t('barSet')}</button>${bar.size?`<button class="sec" id="barc">${t('clear')}</button>`:''}</div></div>
 ${fCount()?`<div style="margin-top:14px"><button class="sec" id="fr" style="width:100%">${t('reset')}</button></div>`:''}`);
-sheet.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{F[b.dataset.f]=!F[b.dataset.f];haptic();updCount();showFilters()});
+sheet.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{F[b.dataset.f]=!F[b.dataset.f];if(F[b.dataset.f])track('filter_on',{filter:b.dataset.f});haptic();updCount();showFilters()});
 sheet.querySelector('#barb').onclick=showBar;const bc=sheet.querySelector('#barc');if(bc)bc.onclick=()=>{bar.clear();updCount();showFilters()};const fr=sheet.querySelector('#fr');if(fr)fr.onclick=()=>{FL.forEach(k=>F[k]=false);updCount();showFilters()}}
-function showBar(){const groups=t('cats').map((c,ci)=>({c,items:ALLING.filter(n=>catOf(n)===ci).sort((a,b)=>ingN(a).localeCompare(ingN(b),lang))})).filter(g=>g.items.length);
+function showBar(){track('bar_open');const groups=t('cats').map((c,ci)=>({c,items:ALLING.filter(n=>catOf(n)===ci).sort((a,b)=>ingN(a).localeCompare(ingN(b),lang))})).filter(g=>g.items.length);
 openSheet(head(t('myBar'),true)+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${t('marked')}<span id="bn">${bar.size}</span>. ${t('always')}</div>${groups.map(g=>`<div class="lab">${g.c}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${g.items.map(n=>`<button class="tgl${bar.has(n)?' on':''}" data-b="${esc(n)}">${esc(ingN(n))}</button>`).join('')}</div>`).join('')}<div style="margin-top:16px;display:flex"><button class="big" id="bd">${t('done')}</button></div>`);
 sheet.querySelector('#back').onclick=showFilters;sheet.querySelector('#bd').onclick=showFilters;
 sheet.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const n=b.dataset.b;bar.has(n)?bar.delete(n):bar.add(n);b.classList.toggle('on',bar.has(n));sheet.querySelector('#bn').textContent=bar.size;updCount()})}
-function showRandom(){const base=(inGroup&&focus?focus.items:D).filter(d=>!d.hidden&&!d.nk===(world==='c'));let pool=base.filter(passes);if(!pool.length)pool=base;showCard(pool[Math.floor(Math.random()*pool.length)])}
+function showRandom(){track('random',{world});const base=(inGroup&&focus?focus.items:D).filter(d=>!d.hidden&&!d.nk===(world==='c'));let pool=base.filter(passes);if(!pool.length)pool=base;showCard(pool[Math.floor(Math.random()*pool.length)])}
 function applyStatic(){document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});const sl=document.querySelector('.seg[data-m=l]');if(sl)sl.textContent=t(world==='n'?'segLn':'segL');document.querySelectorAll('.wsb').forEach(b=>{const on=b.dataset.w===world;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});document.getElementById('lng').textContent=lang==='ru'?'EN':'RU';document.getElementById('lng0').textContent=lang==='ru'?'English':'Русский';document.documentElement.lang=lang}
 function setLang(l){lang=l;applyStatic();fontsOk++;PL.forEach(q=>q._lk=null);hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';if(cardOpen)closeSheet();updCount();haptic('sel')}
 document.getElementById('lng').onclick=()=>setLang(lang==='ru'?'en':'ru');document.getElementById('lng0').onclick=()=>setLang(lang==='ru'?'en':'ru');
@@ -891,11 +891,11 @@ let ageOk=false;
 /* Экран 18+ — только при первом запуске: подтверждение хранится в CloudStorage и в localStorage. */
 function hideAge(){ageOk=true;try{localStorage.setItem('wtd_age','1')}catch(e){}document.getElementById('age').style.display='none';afterAge()}
 document.getElementById('age18').onclick=hideAge;
-document.getElementById('age0').onclick=()=>{F.zero=true;updCount();hideAge()};
+document.getElementById('age0').onclick=()=>{track('age_no');F.zero=true;updCount();hideAge()};
 function step(dir){const cur=(inGroup&&focus)?focus:frontHub();const ang=h=>{const r=mv(M,h.tgt);return Math.atan2(r[0],r[2])};const a0=ang(cur);const others=hubs.filter(h=>h!==cur).map(h=>{let d=ang(h)-a0;while(d<=0)d+=2*Math.PI;return{h,d}}).sort((a,b)=>a.d-b.d);const pick=dir>0?others[0]:others[others.length-1];if(!pick)return;focus=pick.h;tilt=[0,0];wx=wy=0;haptic('sel')}
 document.getElementById('ig').onclick=e=>{if(tg&&tg.openLink){e.preventDefault();tg.openLink('https://www.instagram.com/ne.drozd/')}};
 document.getElementById('prev').onclick=()=>step(-1);document.getElementById('next').onclick=()=>step(1);
-document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m;build()});
+document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m;track('map_mode',{world,mode});build()});
 window.addEventListener('resize',()=>{size();fontsOk++;PL.forEach(q=>q._lk=null)});
 applyStatic();size();build();updCount();requestAnimationFrame(frame);
 if(document.fonts)document.fonts.ready.then(()=>{fontsOk++;PL.forEach(q=>q._lk=null)});
@@ -942,7 +942,7 @@ const TERMS=[
 {ru:['Флоат (слой)','Ингредиент медленно наливают по барной ложке, чтобы он лёг слоем сверху и не смешался.'],en:['Float','Pouring slowly over the back of a bar spoon so the ingredient sits as a separate layer on top.']},
 {ru:['Сбрызнуть цедрой','Полоску цедры сгибают над бокалом кожицей вниз — эфирные масла брызгают на поверхность и дают аромат.'],en:['Express a twist','Bending a strip of peel skin-side down over the glass so its oils spray onto the drink.']},
 {ru:['Ободок','Край бокала смачивают долькой цитруса и обмакивают в соль или сахар.'],en:['Rim','Moistening the rim with a citrus wedge and dipping it in salt or sugar.']}];
-function showTerms(){openSheet(head(lang==='en'?'Glossary':'Термины')+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${lang==='en'?'Bar tools and techniques used in the recipes.':'Барные инструменты и техники, которые встречаются в рецептах.'}</div>`+
+function showTerms(){track('terms');openSheet(head(lang==='en'?'Glossary':'Термины')+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${lang==='en'?'Bar tools and techniques used in the recipes.':'Барные инструменты и техники, которые встречаются в рецептах.'}</div>`+
 TERMS.map(x=>{const [n,txt]=x[lang];return`<div style="margin-top:16px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)">${x.img?`<img src="${x.img}" alt="${esc(n)}" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:12px;display:block;background:#1a1f3a"><div style="font-size:10px;color:#6F6D8E;margin-top:4px">${lang==='en'?'Photo':'Фото'}: ${esc(x.cr)} · Wikimedia Commons</div>`:''}<div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#F3F1FF;margin-top:${x.img?8:0}px">${esc(n)}</div><div style="font-size:15px;line-height:1.55;color:#DCDAF0;margin-top:4px">${txt}</div></div>`}).join(''),true)}
 
 /* ===================== Поиск по нескольким фильтрам ===================== */
@@ -959,7 +959,7 @@ openSheet(head(t('search'))+`<input class="din" id="q" placeholder="${t('searchP
 <div class="lab">${t(world==='n'?'segLn':'segL')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.l,world==='n'?KORDER_N.l:[1,2,3,4,'few','many','batch','classic'],lName,'l')}</div>${nF?`<button class="sec" id="sfr" style="width:100%;margin-top:6px">${t('reset')}</button>`:''}</div>
 <div id="res" style="margin-top:6px"></div>`);const q=sheet.querySelector('#q'),res=sheet.querySelector('#res');
 const run=()=>{const s=q.value.trim().toLowerCase();SF.q=q.value;const nf=SF.b.size+SF.t.size+SF.l.size;if(!s&&!nf){res.innerHTML=`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('searchHint')} ${world==='n'?(lang==='en'?'Filters combine: e.g. Berry + About a week.':'Фильтры складываются: например, Ягодные + Неделя.'):(lang==='en'?'Filters combine: e.g. Sweet + Few ingredients + Vodka.':'Фильтры складываются: например, Сладкие + Малосоставные + Водка.')}</div>`;return}
-const f=searchHits(s);res.innerHTML=`<div style="font-size:12px;color:#8E8CAE;margin:8px 0 2px">${lang==='en'?'Found':'Найдено'}: ${f.length}</div>`+(f.length?f.map(rowHtml).join(''):`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('nothing')}</div>`);bindChips()};
+const f=searchHits(s);trackSearch(f.length);res.innerHTML=`<div style="font-size:12px;color:#8E8CAE;margin:8px 0 2px">${lang==='en'?'Found':'Найдено'}: ${f.length}</div>`+(f.length?f.map(rowHtml).join(''):`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('nothing')}</div>`);bindChips()};
 q.oninput=run;run();
 sheet.querySelector('#sft').onclick=()=>{SF.open=!SF.open;showSearch()};sheet.querySelector('#rndb').onclick=()=>{haptic();showRandom()};
 const r=sheet.querySelector('#sfr');if(r)r.onclick=()=>{SF.b.clear();SF.t.clear();SF.l.clear();showSearch()};
@@ -1011,7 +1011,7 @@ if(!n){err.textContent=E_?'Enter a name':'Введите название';retur
 if((!d||d.n!==n)&&BYNAME.has(n)&&!BYNAME.get(n).hidden){err.textContent=E_?'A recipe with this name already exists':'Рецепт с таким названием уже есть';return}
 let nu;if(N){const days=+rd('ed');if(!(days>=1)){err.textContent=E_?'Enter the number of days':'Укажите, сколько дней настаивать';return}nu={k:'n',n,b:st.b,ts:st.ts,days,abv:+rd('ea')||35,y:+rd('ey')||500,ings,steps:steps.length?steps:[E_?'Infuse, strain and bottle.':'Настаивайте, процедите и разлейте по бутылкам.']}}
 else nu={n,b:st.b,ts:st.ts,l:st.l,bt:st.bt,g:sheet.querySelector('#eg').value.trim(),ings,steps:steps.length?steps:[E_?'Mix and serve.':'Смешайте и подавайте.']};
-const conv=N?userToDN:userToD;if(d){BYNAME.delete(d.n);const k=USER.indexOf(d.u);USER[k>=0?k:USER.length]=nu;conv(nu,d)}else{USER.push(nu);d=conv(nu)}
+const conv=N?userToDN:userToD;track(d?'recipe_edit':'recipe_create',{kind:N?'настойка':'коктейль'});if(d){BYNAME.delete(d.n);const k=USER.indexOf(d.u);USER[k>=0?k:USER.length]=nu;conv(nu,d)}else{USER.push(nu);d=conv(nu)}
 haptic();build();showCard(d)}};
 draw()}
 
@@ -1037,7 +1037,7 @@ const rows=[...acc.values()].map(o=>{let txt;if(o.u==='мл')txt=fmtMl(o.n);else
 else if(/палоч/.test(o.u))txt=Math.ceil(o.n)+' '+t('sticks');else if(/бутон/.test(o.u))txt=Math.ceil(o.n)+' '+t('cloves');else if(/звёзд/.test(o.u))txt=Math.ceil(o.n)+' '+t('stars');else txt=fmtNum(Math.round(o.n*10)/10)+' '+amtL(o.u);return{name:o.name,txt,c:catOf(o.name)}});
 rows.sort((a,b)=>(a.c?1:0)-(b.c?1:0)||ingN(a.name).localeCompare(ingN(b.name),lang));return{rows,jars,maxD,nb}}
 /* Переключение карт — только на общем уровне; в открытой группе верхний переключатель листает группы. */
-function switchWorld(w){if(w===world||WT)return;if(inGroup)exitGroup();if(cardOpen)closeSheet();WT={t0:performance.now(),dir:w==='n'?1:-1,w,bx0:bgx,sw:0};haptic('sel');document.querySelectorAll('.wsb').forEach(b=>b.classList.toggle('on',b.dataset.w===w))}
+function switchWorld(w){if(w===world||WT)return;if(inGroup)exitGroup();if(cardOpen)closeSheet();track('world',{to:w==='n'?'настойки':'коктейли'});WT={t0:performance.now(),dir:w==='n'?1:-1,w,bx0:bgx,sw:0};haptic('sel');document.querySelectorAll('.wsb').forEach(b=>b.classList.toggle('on',b.dataset.w===w))}
 function applyWorld(){SF.b.clear();SF.t.clear();SF.l.clear();applyStatic();lastHdr='';updCount();document.getElementById('cv').setAttribute('aria-label',world==='n'?(lang==='en'?'Infusion map':'Карта настоек: звёздное небо групп настоек'):(lang==='en'?'Cocktail map':'Коктейльная карта: звёздное небо групп коктейлей'))}
 document.querySelectorAll('.wsb').forEach(b=>b.onclick=()=>switchWorld(b.dataset.w));
 
@@ -1057,6 +1057,19 @@ openSheet(head(E_?'My recipes':'Мои рецепты')+`<div style="font-size:1
 <div style="display:flex;gap:8px;margin-top:14px">${world==='n'?bn+bc:bc+bn}</div>${(world==='n'?parts.reverse():parts).join('')}`);
 sheet.querySelector('#newc').onclick=()=>showEditor(null,'c');sheet.querySelector('#newn').onclick=()=>showEditor(null,'n');bindChips()}
 Object.assign(STR.ru,{cRnd:'Случайный'});Object.assign(STR.en,{cRnd:'Random'});
+/* ===================== Статистика: Яндекс Метрика =====================
+   Обезличенно: вместо Telegram-ID — хэш (SHA-256 с солью), из которого нельзя восстановить, кто это.
+   Имя, ник и телефон не передаются. Пока YM_ID = 0, счётчик выключен и ничего не отправляется. */
+const YM_ID=0;
+const TRACK_LOG=[];/* для проверки: последние события */
+function track(goal,params){TRACK_LOG.push([goal,params||null]);if(TRACK_LOG.length>50)TRACK_LOG.shift();if(!YM_ID||!window.ym)return;try{ym(YM_ID,'reachGoal',goal,params||{});ym(YM_ID,'params',{ev:{[goal]:params||1}})}catch(e){}}
+let _lastSearch=0;function trackSearch(n){const now=Date.now();if(now-_lastSearch<60000)return;_lastSearch=now;track('search',{world,found:n})}
+async function ymUserId(){try{const id=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id;if(!id||!crypto.subtle)return'';const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('whattodrinkuh:'+id));return[...new Uint8Array(h)].slice(0,12).map(b=>b.toString(16).padStart(2,'0')).join('')}catch(e){return''}}
+(async()=>{if(!YM_ID)return;
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+const uid=await ymUserId();const inTg=!!tg;
+ym(YM_ID,'init',{clickmap:false,trackLinks:true,accurateTrackBounce:true,webvisor:false,params:{inTelegram:inTg?'да':'нет',platform:inTg?(tg.platform||'?'):'browser',startapp:startParam?(startParam()||'—'):'—'}});
+if(uid){ym(YM_ID,'setUserID',uid);ym(YM_ID,'userParams',{UserID:uid,inTelegram:inTg?'да':'нет'})}})();
 /* ===== Сохранение: у каждого пользователя свои данные =====
    В Telegram — CloudStorage (привязано к аккаунту и боту, синхронизируется между устройствами).
    В обычном браузере — localStorage. Коктейли сохраняются по названию, чтобы порядок базы можно было менять. */
@@ -1100,7 +1113,7 @@ function startParam(){let s='';try{s=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.s
 function lsAge(){try{return localStorage.getItem('wtd_age')==='1'}catch(e){return false}}
 let pendingMenu=null;(()=>{const s=startParam();if(!/^m_[0-9a-z]+x\d+(-[0-9a-z]+x\d+)*$/.test(s))return;const items=new Map();s.slice(2).split('-').forEach(p=>{const[a,b]=p.split('x');const i=parseInt(a,36);if(D[i])items.set(i,clamp(+b||1,1,99))});if(items.size)pendingMenu=items})();
 function sameItems(a,b){if(a.size!==b.size)return false;for(const[k,v]of a)if(b.get(k)!==v)return false;return true}
-function afterAge(){if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;
+function afterAge(){if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;track('menu_import',{items:items.size});
 if(!lists.some(l=>sameItems(l.items,items))){const vals=[...items.values()];lists.push({id:lid++,name:t('sharedList'),items,shop:false,def:vals.every(v=>v===vals[0])?vals[0]:4})}
 updCount();showLists()}
 loadAll().then(age=>{applyStatic();if(USER.length||world==='n'){build();applyWorld()}hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;PL.forEach(q=>q._lk=null);updCount();if(age||ageOk||lsAge())hideAge();else document.getElementById('age').style.display='flex'}).catch(()=>{loaded=true;if(!lsAge())document.getElementById('age').style.display='flex'});
