@@ -19,6 +19,7 @@ button{font:inherit}
 .dotc{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:#EAD3A6;color:#1A1330;font-size:11px;font-weight:600;display:none;align-items:center;justify-content:center;padding:0 5px;box-sizing:border-box}
 .seg{flex:1;height:38px;border-radius:11px;border:none;background:transparent;color:#A3A1C2;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s,color .2s}
 .seg.on{background:#EAD3A6;color:#1A1330}
+.wsb[data-w=n].on{background:#F2B096;color:#3A1424}
 .ir{display:flex;align-items:baseline;font-size:15px;padding:7px 0;color:#EEEDFE}
 .ld{flex:1;border-bottom:1px dotted rgba(220,225,255,.22);margin:0 8px}
 .am{color:#CFCDE6;white-space:nowrap}
@@ -38,7 +39,7 @@ details.prep>summary{list-style:none;cursor:pointer}details.prep>summary::-webki
 <canvas id="cv" role="img" aria-label="Коктейльная карта: звёздное небо групп коктейлей" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab"></canvas>
 <div id="hdr" style="position:absolute;top:calc(var(--st) + var(--ct) + 12px);left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;pointer-events:none">
 <button class="g ib" id="prev" aria-label="Предыдущая группа"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
-<div style="text-align:center;min-width:0;padding:0 6px"><div id="gname" style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#F3F1FF;line-height:1.1">…</div><div id="gsub" style="font-size:12px;color:#9997B8;margin-top:3px">…</div></div>
+<div style="text-align:center;min-width:0;padding:0 6px;display:flex;flex-direction:column;align-items:center"><div id="wsw" class="g" role="tablist" aria-label="Карта" style="display:flex;gap:3px;padding:3px;border-radius:14px;pointer-events:auto"><button class="seg wsb on" role="tab" data-w="c" data-t="wC" style="height:34px;padding:0 16px;flex:none">Коктейли</button><button class="seg wsb" role="tab" data-w="n" data-t="wN" style="height:34px;padding:0 16px;flex:none">Настойки</button></div><div id="gname" style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#F3F1FF;line-height:1.1">…</div><div id="gsub" style="font-size:12px;color:#9997B8;margin-top:3px">…</div></div>
 <button class="g ib" id="next" aria-label="Следующая группа"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
 </div>
 <button class="g pl" id="terms" aria-label="Термины" style="position:absolute;left:14px;top:calc(var(--st) + var(--ct) + 72px);height:32px;width:40px;padding:0;justify-content:center;font-size:16px"><i class="ti ti-book" aria-hidden="true"></i></button>
@@ -373,6 +374,98 @@ const CUSTOM={
 'Шерри коблер':{ru:['Наполните хайбол колотым льдом.','Положите в шейкер 2 дольки апельсина и слегка разомните их.','Налейте херес амонтильядо 90 мл и сахарный сироп 15 мл.','Добавьте лёд и коротко встряхните 5–8 секунд.','Процедите в бокал на колотый лёд.','Украсьте свежими ягодами и долькой апельсина, подавайте с трубочкой.'],en:['Fill a highball with crushed ice.','Put 2 orange slices into the shaker and press them lightly.','Pour in 90 ml of amontillado sherry and 15 ml of simple syrup.','Add ice and give it a short shake of 5–8 seconds.','Strain over the crushed ice.','Garnish with fresh berries and an orange slice and serve with a straw.']}};
 
 Object.assign(CUSTOM,{'Эспрессо-тоник':{ru:['Сварите эспрессо 40 мл и дайте ему остыть до комнатной температуры.','Наполните хайбол льдом доверху и налейте тоник 120 мл.','Очень медленно влейте эспрессо по барной ложке — он ляжет тёмным слоем поверх тоника.','Украсьте долькой апельсина и подавайте, перемешивают уже при питье.'],en:['Brew a 40 ml espresso and let it cool to room temperature.','Fill a highball with ice and pour in 120 ml of tonic.','Very slowly pour the espresso over the back of a bar spoon so it floats as a dark layer on the tonic.','Garnish with an orange wedge and serve; stir it as you drink.']}});
+/* ===================== Карта «Настойки» =====================
+   Отдельная карта рядом с коктейлями. Рецепт рассчитан на одну партию (обычно 0,5 л крепкого).
+   Группы: основа (на чём настаивают), вкус (до 3) и срок настаивания. */
+const dPl=n=>{const a=n%10,b=n%100;return n+' '+(a===1&&b!==11?'день':a>=2&&a<=4&&(b<12||b>14)?'дня':'дней')};
+const nJ=d=>[`Закройте крышкой и настаивайте ${dPl(d)} в тёмном месте при комнатной температуре; раз в 1–2 дня покачивайте банку.`,`Close the lid and infuse for ${d} days in a dark place at room temperature, swirling the jar every day or two.`];
+const nS=['Процедите через сито, а затем через марлю или ватный диск — так настойка станет прозрачной.','Strain through a sieve, then through cheesecloth or a cotton pad for a clear result.'];
+const nR=['Разлейте по бутылкам и дайте отдохнуть 3–5 дней в прохладе — вкус станет мягче и цельнее. Храните в тёмном прохладном месте.','Bottle it and let it rest 3–5 days somewhere cool so the flavour rounds out. Store in a cool dark place.'];
+const NAST=[
+{n:'Хреновуха',en:'Khrenovukha (horseradish vodka)',b:'n_vodka',ts:['n_hot','n_spicy'],days:3,abv:38,y:500,ing:'Водка|500;Корень хрена|40 г;Имбирь|15 г;Мёд|1 ч. л.;Лимон|½ шт',
+st:[['Очистите хрен и имбирь и нарежьте тонкими пластинками. С половинки лимона снимите цедру без белой части.','Peel the horseradish and ginger and slice thinly. Zest half a lemon without the white pith.'],['Сложите всё в чистую банку, добавьте мёд и залейте водкой; перемешайте, чтобы мёд растворился.','Put everything into a clean jar, add the honey and pour in the vodka; stir until the honey dissolves.'],nJ(3),nS,['Храните в холодильнике: через неделю острота станет мягче.','Keep it in the fridge; the heat softens after about a week.']],
+note:['Подают ледяной — под холодец, сало, пельмени. Дольше 3–4 дней не держите: появится горечь.','Serve ice-cold with hearty snacks. Do not infuse longer than 3–4 days or it turns bitter.']},
+{n:'Медовая перцовка',en:'Honey pepper vodka',b:'n_vodka',ts:['n_hot','n_spicy','n_sweet'],days:7,abv:37,y:500,ing:'Водка|500;Перец чили|1 шт;Мёд|1 ст. л.;Душистый перец|3 шт;Чёрный перец горошком|5 шт',
+st:[['Чили вымойте и надрежьте вдоль в двух местах: с семенами будет острее, без них — мягче. Душистый и чёрный перец слегка раздавите ножом.','Wash the chili and make two lengthwise slits: keep the seeds for more heat, remove them for less. Lightly crush the allspice and peppercorns with a knife.'],['Сложите в банку, добавьте мёд и залейте водкой; перемешайте до растворения мёда.','Put them in a jar, add the honey and pour in the vodka; stir until the honey dissolves.'],nJ(7),['Через 3–4 дня попробуйте: если остроты уже хватает, достаньте чили раньше.','Taste after 3–4 days and take the chili out early if it is hot enough.'],nS],
+note:['Классика к борщу и пельменям.','A classic with borscht and dumplings.']},
+{n:'Лимоновка',en:'Lemon vodka',b:'n_vodka',ts:['n_citrus'],days:3,abv:37,y:500,ing:'Водка|500;Лимон|1 шт;Сахар|1 ст. л.',
+st:[['Лимон обдайте кипятком и снимите цедру тонким слоем, без белой части — она горчит.','Pour boiling water over the lemon and peel the zest thinly, leaving the bitter white pith.'],['Положите цедру в банку, добавьте сахар и залейте водкой; перемешайте.','Put the zest into a jar, add the sugar, pour in the vodka and stir.'],nJ(3),nS,['Охладите перед подачей.','Chill before serving.']],
+note:['Сок не добавляйте — настойка помутнеет. Мякоть пригодится для чая.','Do not add the juice — it clouds the infusion. Use the flesh for tea.']},
+{n:'Лимончелло',en:'Limoncello',b:'n_spirt',ts:['n_citrus','n_sweet'],days:14,abv:30,y:1500,ing:'Спирт 96 %|500;Лимон|8 шт;Сахар|400 г;Вода|700',
+st:[['Лимоны вымойте щёткой и снимите овощечисткой только жёлтую цедру, без белой части.','Scrub the lemons and peel only the yellow zest with a vegetable peeler, leaving the white pith.'],['Залейте цедру спиртом в банке, закройте и оставьте на 7 дней в тёмном месте — спирт станет ярко-жёлтым.','Cover the zest with the spirit in a jar, close it and leave for 7 days in a dark place — it will turn bright yellow.'],['Сварите сироп: нагрейте воду с сахаром, пока сахар не растворится, не кипятите. Полностью остудите.','Make a syrup: heat the water and sugar until the sugar dissolves, without boiling. Cool completely.'],['Процедите спирт от цедры и смешайте с остывшим сиропом.','Strain the spirit off the zest and mix it with the cooled syrup.'],['Разлейте по бутылкам и выдержите ещё 7 дней. Храните в морозилке и подавайте ледяным.','Bottle it and rest for another 7 days. Keep it in the freezer and serve ice-cold.']],
+note:['Помутнело при смешивании — это нормально: масла цедры дают «опаловый» цвет.','Cloudiness after mixing is normal: the zest oils give it an opal look.']},
+{n:'Апельсинчелло',en:'Arancello',b:'n_spirt',ts:['n_citrus','n_sweet'],days:14,abv:30,y:1500,ing:'Спирт 96 %|500;Апельсин|5 шт;Сахар|400 г;Вода|700',
+st:[['Апельсины вымойте щёткой и снимите овощечисткой только оранжевую цедру, без белой части.','Scrub the oranges and peel only the orange zest with a vegetable peeler, leaving the white pith.'],['Залейте цедру спиртом в банке и оставьте на 7 дней в тёмном месте.','Cover the zest with the spirit in a jar and leave for 7 days in a dark place.'],['Сварите сироп из воды и сахара, не доводя до кипения, и остудите.','Make a syrup from the water and sugar without boiling and let it cool.'],['Процедите спирт и смешайте с сиропом.','Strain the spirit and mix it with the syrup.'],['Выдержите в бутылках ещё 7 дней. Подавайте из морозилки.','Rest in bottles for another 7 days. Serve straight from the freezer.']],
+note:['Тот же принцип, что у лимончелло; вкус мягче и слаще.','Same method as limoncello, with a softer, sweeter taste.']},
+{n:'Клюковка',en:'Cranberry vodka (Klyukovka)',b:'n_vodka',ts:['n_berry','n_sour'],days:14,abv:32,y:600,ing:'Водка|500;Клюква|200 г;Сахар|2 ст. л.',
+st:[['Клюкву переберите, промойте и разомните толкушкой или вилкой — каждая ягода должна лопнуть.','Pick over and rinse the cranberries, then crush them with a masher or fork so every berry bursts.'],['Переложите в банку, залейте водкой и закройте.','Transfer to a jar, pour in the vodka and close.'],nJ(14),['Процедите, отожмите ягоды, затем профильтруйте через ватный диск.','Strain, press the berries, then filter through a cotton pad.'],['Добавьте сахар по вкусу, размешайте и дайте отдохнуть 2–3 дня.','Sweeten to taste, stir and let it rest for 2–3 days.']],
+note:['Замороженная клюква тоже подходит — после разморозки она даже лучше отдаёт сок.','Frozen cranberries work too — they release even more juice after thawing.']},
+{n:'Вишнёвка',en:'Cherry liqueur (Vishnyovka)',b:'n_vodka',ts:['n_berry','n_sweet'],days:30,abv:24,y:900,ing:'Водка|500;Вишня|500 г;Сахар|150 г',
+st:[['Вишню промойте и обсушите. Косточки можно оставить — они дают лёгкий миндальный тон.','Rinse and dry the cherries. You can keep the pits — they add a light almond note.'],['Сложите вишню в банку слоями, пересыпая сахаром, и залейте водкой так, чтобы она покрыла ягоды.','Layer the cherries in a jar with the sugar and pour in vodka to cover the berries.'],nJ(30),['Слейте наливку, ягоды отожмите через марлю и смешайте всё вместе.','Pour off the liqueur, press the cherries through cheesecloth and combine.'],nR],
+note:['С косточками дольше 40 дней не держите.','Do not leave it on the pits for more than about 40 days.']},
+{n:'Смородиновая',en:'Blackcurrant vodka',b:'n_vodka',ts:['n_berry','n_sour'],days:14,abv:30,y:700,ing:'Водка|500;Чёрная смородина|300 г;Сахар|100 г',
+st:[['Смородину переберите, промойте и слегка разомните с сахаром.','Pick over and rinse the blackcurrants and lightly crush them with the sugar.'],['Переложите в банку и залейте водкой.','Transfer to a jar and pour in the vodka.'],nJ(14),nS,nR],
+note:['Подойдёт и замороженная смородина.','Frozen blackcurrants are fine too.']},
+{n:'Облепиховая',en:'Sea buckthorn vodka',b:'n_vodka',ts:['n_berry','n_sour','n_sweet'],days:21,abv:32,y:650,ing:'Водка|500;Облепиха|300 г;Мёд|2 ст. л.',
+st:[['Облепиху промойте и слегка раздавите.','Rinse the sea buckthorn and lightly crush it.'],['Переложите в банку, добавьте мёд, залейте водкой и перемешайте.','Transfer to a jar, add the honey, pour in the vodka and stir.'],nJ(21),['Процедите через несколько слоёв марли; тонкая масляная плёнка от ягод — это нормально.','Strain through several layers of cheesecloth; a thin oily film from the berries is normal.'],nR],
+note:['Медово-ананасовый вкус и яркий цвет.','Honeyed, pineapple-like taste and a bright colour.']},
+{n:'Рябина на коньяке',en:'Rowan berry cognac',b:'n_cognac',ts:['n_berry','n_bitter'],days:30,abv:36,y:550,ing:'Коньяк|500;Красная рябина|200 г;Мёд|1 ст. л.',
+st:[['Возьмите рябину, тронутую морозом, или подержите ягоды сутки в морозилке — уйдёт лишняя горечь.','Use rowan berries touched by frost, or keep them in the freezer for a day to take away the excess bitterness.'],['Ягоды промойте, сложите в банку, добавьте мёд и залейте коньяком.','Rinse the berries, put them in a jar, add the honey and pour in the cognac.'],nJ(30),nS,nR],
+note:['Терпкая, с лёгкой горчинкой.','Tart, with a gentle bitterness.']},
+{n:'Кедровка',en:'Pine nut vodka (Kedrovka)',b:'n_vodka',ts:['n_nut','n_spicy'],days:14,abv:38,y:500,ing:'Водка|500;Кедровые орехи|40 г;Апельсин|½ шт;Мёд|1 ч. л.',
+st:[['Орехи в скорлупе ошпарьте кипятком 3 раза, каждый раз сливая воду, — так уйдёт смола.','Pour boiling water over the pine nuts in their shells three times, draining each time, to remove the resin.'],['Слегка раздавите орехи, снимите с апельсина полоску цедры и сложите всё в банку с мёдом.','Lightly crack the nuts, peel a strip of orange zest and put everything into a jar with the honey.'],['Залейте водкой и перемешайте.','Pour in the vodka and stir.'],nJ(14),nS,nR],
+note:['Цвет — от золотистого до коньячного. Сибирская классика.','Golden to cognac-coloured; a Siberian classic.']},
+{n:'Калгановка',en:'Kalganovka (tormentil bitters)',b:'n_samogon',ts:['n_bitter','n_herbal'],days:14,abv:40,y:500,ing:'Самогон|500;Корень калгана|10 г;Мёд|1 ч. л. (по желанию)',
+st:[['Сухой корень калгана (лапчатки прямостоячей) купите в аптеке и раскрошите на кусочки.','Buy dried tormentil (Potentilla erecta) root at a pharmacy and break it into pieces.'],['Залейте самогоном в банке, при желании добавьте мёд.','Cover with the moonshine in a jar; add honey if you like.'],nJ(14),nS,nR],
+note:['Цвет красного дерева, горьковато-древесный вкус. Это русская лапчатка, а не азиатский калган.','Mahogany colour, woody and slightly bitter. This is tormentil root, not Asian galangal.']},
+{n:'Анисовка',en:'Anise vodka',b:'n_vodka',ts:['n_herbal','n_spicy'],days:10,abv:38,y:500,ing:'Водка|500;Бадьян|3 звёздочки;Анис|1 ч. л.;Сахар|1 ст. л.',
+st:[['Бадьян и семена аниса слегка разомните в ступке или раздавите ножом.','Lightly crush the star anise and anise seeds in a mortar or with a knife.'],['Сложите в банку с сахаром и залейте водкой.','Put them in a jar with the sugar and pour in the vodka.'],nJ(10),nS,nR],
+note:['С водой и льдом мутнеет, как узо или пастис.','Turns cloudy with water and ice, like ouzo or pastis.']},
+{n:'Мятная',en:'Mint vodka',b:'n_vodka',ts:['n_herbal'],days:3,abv:37,y:500,ing:'Водка|500;Мята|20 г;Лимон|½ шт;Сахар|1 ст. л.',
+st:[['Мяту промойте и обсушите, листья оборвите и слегка помните в руках.','Rinse and dry the mint, pick the leaves and bruise them lightly in your hands.'],['Сложите мяту и цедру половины лимона в банку, добавьте сахар и залейте водкой.','Put the mint and the zest of half a lemon into a jar, add the sugar and pour in the vodka.'],nJ(3),nS,['Охладите перед подачей и храните в холодильнике.','Chill before serving and keep it in the fridge.']],
+note:['Дольше 3 дней мяту не держите — появится травянистая горечь.','Do not leave the mint in longer than 3 days or it turns grassy and bitter.']},
+{n:'Тархуновая',en:'Tarragon vodka',b:'n_vodka',ts:['n_herbal','n_sweet'],days:3,abv:35,y:500,ing:'Водка|500;Эстрагон|30 г;Лайм|1 шт;Сахар|2 ст. л.',
+st:[['Эстрагон промойте и обсушите, стебли нарежьте, листья оставьте целыми. С лайма снимите цедру.','Rinse and dry the tarragon, chop the stems and keep the leaves whole. Zest the lime.'],['Сложите эстрагон и цедру в банку, добавьте сахар и залейте водкой.','Put the tarragon and zest into a jar, add the sugar and pour in the vodka.'],nJ(3),nS,['Со временем цвет сменится с зелёного на оливковый — это нормально.','Over time the colour fades from green to olive; that is normal.']],
+note:['Вкус как у лимонада «Тархун», только крепкий.','Tastes like Tarkhun soda, only strong.']},
+{n:'Имбирная с лимоном и мёдом',en:'Ginger, lemon & honey vodka',b:'n_vodka',ts:['n_spicy','n_citrus','n_sweet'],days:7,abv:35,y:550,ing:'Водка|500;Имбирь|40 г;Лимон|1 шт;Мёд|2 ст. л.',
+st:[['Имбирь очистите и нарежьте тонкими пластинками. С лимона снимите цедру, из мякоти выжмите сок.','Peel and thinly slice the ginger. Zest the lemon and squeeze the juice.'],['Сложите имбирь, цедру, сок и мёд в банку, залейте водкой и перемешайте.','Put the ginger, zest, juice and honey into a jar, pour in the vodka and stir.'],nJ(7),nS,nR],
+note:['Согревает зимой; хороша и с тоником.','Warming in winter; also good with tonic.']},
+{n:'Яблочная с корицей',en:'Apple cinnamon vodka',b:'n_vodka',ts:['n_fruit','n_spicy','n_sweet'],days:14,abv:30,y:650,ing:'Водка|500;Яблоко|2 шт;Корица|1 палочка;Мёд|2 ст. л.',
+st:[['Яблоки вымойте, удалите сердцевину и нарежьте дольками вместе с кожурой.','Wash and core the apples and cut them into wedges, skin on.'],['Сложите в банку с палочкой корицы и мёдом, залейте водкой.','Put them into a jar with the cinnamon stick and honey and pour in the vodka.'],nJ(14),['Если через неделю аромат корицы уже сильный, палочку можно достать.','If the cinnamon is already strong after a week, take the stick out.'],nS,nR]},
+{n:'Клубничная',en:'Strawberry vodka',b:'n_vodka',ts:['n_berry','n_sweet'],days:7,abv:28,y:700,ing:'Водка|500;Клубника|300 г;Сахар|2 ст. л.',
+st:[['Клубнику промойте, удалите хвостики и разрежьте пополам.','Rinse and hull the strawberries and cut them in half.'],['Сложите в банку, засыпьте сахаром и залейте водкой.','Put them into a jar, add the sugar and pour in the vodka.'],nJ(7),['Не передерживайте: дольше недели ягоды бледнеют и дают вкус варенья.','Do not over-infuse: after a week the berries fade and taste jammy.'],nS]},
+{n:'Малиновая',en:'Raspberry vodka',b:'n_vodka',ts:['n_berry','n_sweet'],days:14,abv:27,y:750,ing:'Водка|500;Малина|300 г;Сахар|100 г',
+st:[['Малину переберите; не мойте, только уберите мусор.','Pick over the raspberries; do not wash them, just remove any debris.'],['Сложите в банку, пересыпая сахаром, и залейте водкой.','Layer them in a jar with the sugar and pour in the vodka.'],nJ(14),['Процедите через марлю, не отжимая сильно, чтобы не было мути, затем через ватный диск.','Strain through cheesecloth without pressing hard to avoid cloudiness, then through a cotton pad.'],nR]},
+{n:'Ореховая на перегородках',en:'Walnut partition bitters',b:'n_vodka',ts:['n_nut','n_bitter'],days:21,abv:38,y:500,ing:'Водка|500;Перегородки грецкого ореха|2 ст. л.;Мёд|1 ч. л.',
+st:[['Перегородки (из 1–1,5 кг орехов) промойте и подсушите.','Rinse and dry the walnut partitions (from 1–1.5 kg of walnuts).'],['Сложите в банку, добавьте мёд и залейте водкой.','Put them into a jar, add the honey and pour in the vodka.'],nJ(21),nS,nR],
+note:['Цвет коньяка, терпкий ореховый вкус. Больше 2–3 ст. л. перегородок на 0,5 л не кладите — будет вязать.','Cognac colour and a tannic nutty taste. Use no more than 2–3 tbsp per 0.5 l or it gets astringent.']},
+{n:'Домашний коньяк',en:'Homemade “cognac” on oak',b:'n_samogon',ts:['n_fruit','n_spicy'],days:30,abv:40,y:500,ing:'Самогон|500;Дубовая щепа|10 г;Чернослив|3 шт;Курага|3 шт;Гвоздика|1 бутон;Сахар|1 ч. л.',
+st:[['Дубовую щепу (продаётся в магазинах для самогоноварения) обдайте кипятком.','Pour boiling water over the oak chips (sold in home-distilling shops).'],['Сложите в банку щепу, чернослив, курагу, гвоздику и сахар, залейте самогоном.','Put the oak chips, prunes, dried apricots, clove and sugar into a jar and pour in the moonshine.'],nJ(30),['Пробуйте раз в неделю: когда появятся цвет и танины, как у коньяка, — сливайте.','Taste weekly; once it has a cognac colour and tannins, pour it off.'],nS,nR]},
+{n:'Абрикосовая на кураге',en:'Dried apricot moonshine',b:'n_samogon',ts:['n_fruit','n_sweet'],days:21,abv:35,y:550,ing:'Самогон|500;Курага|150 г;Мёд|1 ст. л.',
+st:[['Курагу промойте тёплой водой и обсушите; крупную разрежьте пополам.','Rinse the dried apricots in warm water and pat dry; halve large ones.'],['Сложите в банку с мёдом и залейте самогоном.','Put them into a jar with the honey and pour in the moonshine.'],nJ(21),nS,nR],
+note:['Пьяную курагу не выбрасывайте — это отличный десерт.','Keep the boozy apricots — they make a great dessert.']},
+{n:'Апельсиновая на коньяке',en:'Orange cognac',b:'n_cognac',ts:['n_citrus','n_sweet'],days:14,abv:35,y:550,ing:'Коньяк|500;Апельсин|1 шт;Сахар|2 ст. л.',
+st:[['Апельсин обдайте кипятком и снимите цедру без белой части.','Pour boiling water over the orange and peel the zest without the white pith.'],['Залейте цедру коньяком, добавьте сахар и перемешайте.','Cover the zest with the cognac, add the sugar and stir.'],nJ(14),nS,nR],
+note:['Домашний родственник «Гран Марнье»: хороша и сама, и в коктейлях вместо апельсинового ликёра.','A homemade cousin of Grand Marnier: good neat or in cocktails instead of orange liqueur.']},
+{n:'Коньяк на черносливе',en:'Prune cognac',b:'n_cognac',ts:['n_fruit','n_sweet'],days:14,abv:37,y:550,ing:'Коньяк|500;Чернослив|100 г;Сахар|1 ст. л. (по желанию)',
+st:[['Чернослив без косточек промойте и обсушите; копчёный даст дымный оттенок.','Rinse and dry pitted prunes; smoked prunes add a smoky note.'],['Сложите в банку, при желании добавьте сахар и залейте коньяком.','Put them into a jar, add sugar if you like and pour in the cognac.'],nJ(14),nS,nR]},
+{n:'Кофейная на роме',en:'Coffee rum',b:'n_rum',ts:['n_sweet','n_spicy'],days:7,abv:35,y:550,ing:'Тёмный ром|500;Кофейные зёрна|30 г;Стручок ванили|½ шт;Тростниковый сахар|2 ст. л.',
+st:[['Кофейные зёрна слегка раздавите скалкой; стручок ванили разрежьте вдоль.','Lightly crack the coffee beans with a rolling pin; split the vanilla pod lengthwise.'],['Сложите в банку с сахаром и залейте ромом.','Put them into a jar with the sugar and pour in the rum.'],nJ(7),nS,nR],
+note:['Пейте как есть или делайте с ней «Белый русский» вместо кофейного ликёра.','Drink it neat or use it in a White Russian instead of coffee liqueur.']},
+{n:'Ананасовый ром',en:'Pineapple rum',b:'n_rum',ts:['n_fruit','n_sweet'],days:7,abv:33,y:600,ing:'Тёмный ром|500;Ананас|200 г;Стручок ванили|½ шт;Тростниковый сахар|1 ст. л.',
+st:[['Ананас очистите и нарежьте кубиками; можно слегка обжарить на сухой сковороде до карамельных краёв.','Peel and dice the pineapple; you can char it lightly in a dry pan for caramelised edges.'],['Сложите с ванилью и сахаром в банку и залейте ромом.','Put it into a jar with the vanilla and sugar and pour in the rum.'],nJ(7),nS,nR],
+note:['С таким ромом тики-коктейли и дайкири звучат ярче.','Tiki drinks and daiquiris taste brighter with it.']}];
+Object.assign(ING_EN,{'Корень хрена':'Horseradish root','Душистый перец':'Allspice berries','Чёрный перец горошком':'Black peppercorns','Спирт 96 %':'Rectified spirit 96%','Самогон':'Moonshine (double-distilled)','Клюква':'Cranberries','Вишня':'Sour cherries','Чёрная смородина':'Blackcurrants','Облепиха':'Sea buckthorn','Красная рябина':'Rowan berries','Кедровые орехи':'Pine nuts in shell','Корень калгана':'Tormentil root','Анис':'Anise seeds','Эстрагон':'Fresh tarragon','Малина':'Raspberries','Перегородки грецкого ореха':'Walnut partitions','Дубовая щепа':'Oak chips','Чернослив':'Prunes','Курага':'Dried apricots','Кофейные зёрна':'Coffee beans','Стручок ванили':'Vanilla pod'});
+Object.assign(BE,{n_vodka:'On vodka',n_samogon:'On moonshine',n_spirt:'On spirit',n_cognac:'On cognac',n_rum:'On rum'});
+Object.assign(TE,{n_berry:'Berry',n_fruit:'Fruit',n_citrus:'Citrus',n_sour:'Sour',n_sweet:'Sweet',n_spicy:'Spiced',n_hot:'Hot',n_herbal:'Herbal',n_bitter:'Bitter',n_nut:'Nutty'});
+Object.assign(LE,{n_fast:'Up to 3 days',n_week:'About a week',n_month:'2–3 weeks',n_long:'A month'});
+Object.assign(STR.ru,{wC:'Коктейли',wN:'Настойки',segLn:'Срок',bat:'парт.',nastTag:'настойка',ready:d=>'готово через '+dPl(d),yieldL:'выход',f_nFast:'Быстрые — до недели',f_nNoSugar:'Без сахара и мёда',f_nSoft:'Мягкие — до 30 %',
+secN:'Для настоек',jars:n=>`Банки по 1 л — ${n} шт.`,startBy:n=>`Поставьте настаиваться минимум за ${dPl(n)} до вечеринки.`,nastLine:n=>`Настоек: ${n} парт.`,nastL:'Настойки:',subOvN:'крутите небо · коснитесь созвездия настоек',nRnd:'Случайная настойка'});
+Object.assign(STR.en,{wC:'Cocktails',wN:'Infusions',segLn:'Time',bat:'batch',nastTag:'infusion',ready:d=>'ready in '+d+' days',yieldL:'yield',f_nFast:'Quick — up to a week',f_nNoSugar:'No sugar or honey',f_nSoft:'Soft — up to 30%',
+secN:'For the infusions',jars:n=>`1-litre jars — ${n}`,startBy:n=>`Start infusing at least ${n} days before the party.`,nastLine:n=>`Infusions: ${n} batch.`,nastL:'Infusions:',subOvN:'spin the sky · tap a constellation',nRnd:'Random infusion'});
+Object.assign(ICONS,{flask:'<path d="M9 3l6 0"/><path d="M10 9l4 0"/><path d="M10 3v6l-4 11a.7 .7 0 0 0 .5 1h11a.7 .7 0 0 0 .5 -1l-4 -11v-6"/>',calendar:'<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M4 11h16"/>'});
+Object.assign(STR.ru,{pluralN:n=>n%10==1&&n%100!=11?'настойка':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?'настойки':'настоек',filtHintN:'Неподходящие настойки гаснут на карте',barIntroN:'Отметьте бутылки и продукты, которые есть дома, — на карте ярко загорятся настойки, которые можно поставить прямо сейчас.'});
+Object.assign(STR.en,{pluralN:n=>n===1?'infusion':'infusions',filtHintN:'Infusions that don’t match fade out on the map',barIntroN:'Mark the bottles and ingredients you have at home, and the infusions you can start right now will light up on the map.'});
 const TOPRE=/тоник|содовая|газированная вода|кола|спрайт|имбирное пиво|имбирный эль|игрист|шампан|просекко|газировка/i;
 function parseSp(s){const o={tech:'',f:{}};(s||'shake').split(' ').forEach((tk,i)=>{if(i===0){o.tech=tk;return}const p=tk.indexOf('=');if(p>0)o.f[tk.slice(0,p)]=tk.slice(p+1).replace(/_/g,' ');else o.f[tk]=true});return o}
 const LVL={build:1,buildN:1,muddle:1,swizzle:1,layer:1,shake:2,muddleS:2,dry:2,blend:2,stir:3};
@@ -396,7 +489,7 @@ swz1:g=>`Fill the ${g} with crushed ice.`,swz2:'Put a bar spoon into the glass a
 garn:x=>`Garnish with ${x} and serve straight away.`,ang:'Add a few drops of Angostura onto the foam and serve straight away.',serve:'Serve straight away.',glass:'glass'}};
 function gWord(d){if(lang==='en')return d.g?(GL_EN[d.g]||d.g):'glass';return d.g?(GACC[d.g]||d.g):'бокал'}
 const UP_GL=/мартинка|рюмка|купе|маргаритка|флюте/;
-function steps(d){const c=CUSTOM[d.n];if(c)return c[lang];const sp=d.sp,S=ST[lang],f=sp.f,g=gWord(d);const out=[];
+function steps(d){if(d.nk)return d.stp.map(x=>lang==='en'?x[1]:x[0]);const c=CUSTOM[d.n];if(c)return c[lang];const sp=d.sp,S=ST[lang],f=sp.f,g=gWord(d);const out=[];
 const lc=n=>{if(lang==='ru')return /^[А-ЯЁ][а-яё]/.test(n)?n[0].toLowerCase()+n.slice(1):n;return /^(Aperol|Cointreau|Baileys|Green Chartreuse|Yellow Chartreuse|Chartreuse|Angostura|Peychaud|Tabasco|Worcestershire|Sprite|Prosecco|Champagne|Cognac|Scotch|Drambuie|Bénédictine|Fernet|Cynar|Lillet|Frangelico|Grand Marnier|Cherry Heering|Amaro|Irish|London|Old Tom|Calvados|Pisco|Grappa|Crème|Butterscotch|Blended Scotch|Smoky Scotch|Maraschino|Falernum|Amaretto)/.test(n)?n:n[0].toLowerCase()+n.slice(1)};const it=x=>x.am==='долить'?lc(ingN(x.a)):`${lc(ingN(x.a))} ${amtL(x.am)}`;const mudN=f.m?f.m.split('+'):[];
 const isTop=x=>TOPRE.test(x.a)&&(x.am==='долить'||['build','buildN','muddle','muddleS','shake'].includes(sp.tech));
 const garnI=d.ings.filter(x=>/для подачи/.test(x.am)),rinseI=d.ings.filter(x=>/ополаск/.test(x.am));
@@ -426,6 +519,11 @@ const TC={sweet:'yellow',dry:'olive',spicy:'brown',sour:'green',fruit:'pink',cre
 const L={1:'Налить и смешать',2:'Шейкер',3:'Смесительный стакан',4:'Для профи',few:'Малосоставные',many:'Многосоставные',batch:'На компанию',classic:'Классика'};
 const LC={1:'teal',2:'amber',3:'purple',4:'coral',few:'green',many:'pink',batch:'blue',classic:'red'};
 /* «Для профи» — только то, что действительно сложно: ингредиенты, которых нет в обычном магазине (настойки, редкие ликёры, домашние кордиалы) или особая техника. */
+Object.assign(B,{n_vodka:['На водке','rose'],n_samogon:['На самогоне','amber'],n_spirt:['На спирту','yellow'],n_cognac:['На коньяке','red'],n_rum:['На роме','brown']});
+Object.assign(T,{n_berry:'Ягодные',n_fruit:'Фруктовые',n_citrus:'Цитрусовые',n_sour:'Кислые',n_sweet:'Сладкие',n_spicy:'Пряные',n_hot:'Острые',n_herbal:'Травяные',n_bitter:'Горькие',n_nut:'Ореховые'});
+Object.assign(TC,{n_berry:'pink',n_fruit:'coral',n_citrus:'yellow',n_sour:'lime',n_sweet:'rose',n_spicy:'brown',n_hot:'red',n_herbal:'green',n_bitter:'olive',n_nut:'amber'});
+Object.assign(L,{n_fast:'До 3 дней',n_week:'Неделя',n_month:'2–3 недели',n_long:'Месяц'});Object.assign(LC,{n_fast:'teal',n_week:'amber',n_month:'coral',n_long:'purple'});
+const isN=k=>String(k).startsWith('n_');
 const RARE_RE=/Цитрусовый ром|Butterscotch шнапс|Фалернум|Пименто дрэм|Ромашковый кордиал|Сироп корицы|Фиалковый ликёр|Черри Херинг|Крепкий ром 151|Крепкий белый ром|Выдержанный агриколь ром|Олд Том джин|Лилле Блан|Амаро Нонино|Херес амонтильядо|Медово-имбирный сироп|Дымный ром|Биттер Пешо|Вода апельсинового цвета/;
 const L4MAP={'Blowjob':1,'Огуречный лимонад':1,'Ирландский кофе':1,'Глинтвейн':1};
 /* Разделение основ: ром/кашаса, коньяк/бренди, игристое/вино, текила/мескаль, ликёры/аперитивы. */
@@ -440,13 +538,17 @@ return d.b}
 const D=RAW.concat(RAW2,RAW3).map(([n,b,t,l,g,ing,m,note,bt,src,v],i)=>({i,n,b,t,l,g,ing,m,note,bt,src,v,ings:ing.split(';').map(s=>{const[a,am]=s.split('|');return{a,am}})}));
 Object.entries(EN2).forEach(([k,v])=>{EN[k]=[v[0],'',v[1]]});EN['Last word'][0]='Last Word (rum)';
 D.forEach(d=>{d.sp=parseSp(SP[d.n]);d.l=d.sp.tech==='custom'?(L4MAP[d.n]||Math.min(+(d.sp.f.L||2),3)):(LVL[d.sp.tech]||2);if(RARE_RE.test(d.ing))d.l=4;d.b=splitBase(d);if(d.n==='Last word')d.v='Последнее слово';if(d.n==='Кир рояль')d.v='Кир'});
+/* Настойки — в общей базе после коктейлей (номера коктейлей в старых ссылках не меняются). */
+NAST.forEach(o=>{const d={i:D.length,nk:1,n:o.n,b:o.b,t:o.ts[0],ts:o.ts,l:o.days<=3?'n_fast':o.days<=10?'n_week':o.days<30?'n_month':'n_long',lx2:[],g:'',ing:o.ing,m:'',note:o.note?o.note[0]:'',bt:0,src:'n',v:'',days:o.days,abv:o.abv,y:o.y,stp:o.st,sp:parseSp('custom'),
+ings:o.ing.split(';').map(s=>{const[a,am]=s.split('|');return{a,am}})};d.sw=d.ings.some(x=>/сахар|мёд/i.test(x.a)&&!/по желанию/.test(x.am));d.cnt=d.ings.length;EN[d.n]=[o.en,'',o.note?o.note[1]:''];D.push(d)});
+let world='c',WT=null,SHX=0,FADE=1,skyK=0;
 const tg=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData?window.Telegram.WebApp:null;
 const BOT_URL='https://t.me/whattodrinkuh_bot/app';
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),ov=document.getElementById('ov'),sheet=document.getElementById('sheet');
 const lc=document.createElement('canvas'),lctx=lc.getContext('2d');
 let PL=[],W,H,DPR=1,SAFE_T=0,SAFE_B=0,mode='b',hubs=[],M=[[1,0,0],[0,1,0],[0,0,1]],wx=0,wy=0,drag=false,focus=null,sel=null,lastHdr='',zoom=1,zA=1,zB=1,zT0=0,inGroup=false,tilt=[0,0],cardOpen=false,lists=[],lid=1,bgx=0,bgy=0,fontsOk=0,E=0;
 const fav=new Set(),bar=new Set(),notes={};
-const F={can:false,noEgg:false,noDairy:false,batch:false,mine:false,zero:false};
+const F={can:false,noEgg:false,noDairy:false,batch:false,mine:false,zero:false,nFast:false,nNoSugar:false,nSoft:false};
 const ZF=2,STAR=11,DOT=3.5,HUB0=29,HUB1=40,LIM=.45,SCOV=.2/260;
 let lang=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.language_code&&!/^ru|^uk|^be|^kk/.test(tg.initDataUnsafe.user.language_code))?'en':'ru';
 const t=k=>STR[lang][k];
@@ -474,12 +576,12 @@ const isOpt=am=>/по желанию|для пенки|для подачи|по 
 const reqOf=d=>d.ings.filter(x=>!ALWAYS.has(x.a)&&!isOpt(x.am)).map(x=>canon(x.a));
 const missOf=d=>reqOf(d).filter(a=>!bar.has(a));
 const ALLING=[...new Set(D.flatMap(reqOf))].sort((a,b)=>a.localeCompare(b,'ru'));
-function catOf(n){if(/водка|джин|ром\b|ром$|^ром|текила|мескаль|виски|бурбон|скотч|коньяк|бренди|кашаса|абсент|писко|граппа|кальвадос|олд том/i.test(n)&&!/ликёр/i.test(n))return 0;if(/ликёр|шнапс|трипл|куантро|апероль|биттер|вермут|шартрез|мараскино|бейлис|игрист|шампан|просекко|вино|портвейн|херес|лилле|бенедиктин|драмбуи|фернет|чинар|амаретто|франжелико|фалернум|амаро|кюрасао|херинг|дрэм|гран марнье/i.test(n))return 1;if(/сок|сироп|пюре|гренадин|оршад|мёд|кордиал/i.test(n))return 2;if(/тоник|содовая|кола|спрайт|пиво|эль|газиров|чай|кофе|эспрессо/i.test(n))return 3;if(/сливки|белок|молоко/i.test(n))return 4;return 5}
+function catOf(n){if(/самогон|спирт 96|водка|джин|ром\b|ром$|^ром|текила|мескаль|виски|бурбон|скотч|коньяк|бренди|кашаса|абсент|писко|граппа|кальвадос|олд том/i.test(n)&&!/ликёр/i.test(n))return 0;if(/ликёр|шнапс|трипл|куантро|апероль|биттер|вермут|шартрез|мараскино|бейлис|игрист|шампан|просекко|вино|портвейн|херес|лилле|бенедиктин|драмбуи|фернет|чинар|амаретто|франжелико|фалернум|амаро|кюрасао|херинг|дрэм|гран марнье/i.test(n))return 1;if(/сок|сироп|пюре|гренадин|оршад|мёд|кордиал/i.test(n))return 2;if(/тоник|содовая|кола|спрайт|пиво|эль|газиров|чай|кофе|эспрессо/i.test(n))return 3;if(/сливки|белок|молоко/i.test(n))return 4;return 5}
 const isDairy=d=>d.ings.some(x=>/сливки|бейлис|сливочн|молок/i.test(x.a)&&!/кокос/i.test(x.a));
 const isEgg=d=>d.ings.some(x=>/белок|желток/i.test(x.a)&&!/по желанию|для пенки/.test(x.am));
-function passes(d){if(F.can&&bar.size&&missOf(d).length)return false;if(F.noEgg&&isEgg(d))return false;if(F.noDairy&&isDairy(d))return false;if(F.batch&&!d.bt)return false;if(F.mine&&d.src!=='my')return false;if(F.zero&&d.b!=='zero')return false;return true}
+function passes(d){if(F.can&&bar.size&&missOf(d).length)return false;if(d.nk){if(F.zero)return false;if(F.nFast&&d.days>10)return false;if(F.nNoSugar&&d.sw)return false;if(F.nSoft&&d.abv>30)return false;return true}if(F.noEgg&&isEgg(d))return false;if(F.noDairy&&isDairy(d))return false;if(F.batch&&!d.bt)return false;if(F.mine&&d.src!=='my')return false;if(F.zero&&d.b!=='zero')return false;return true}
 const ABV=[[/151|крепкий белый ром/i,70],[/ангостура/i,44],[/портвейн/i,19],[/херес/i,17],[/лилле/i,17],[/чинар/i,16],[/фалернум/i,11],[/амаро/i,35],[/фернет/i,39],[/бенедиктин|драмбуи|гран марнье/i,40],[/амаретто/i,28],[/кюрасао/i,30],[/апероль/i,11],[/красный биттер/i,25],[/вермут/i,16],[/шартрез/i,55],[/мараскино/i,32],[/трипл|куантро|апельсиновый ликёр/i,35],[/бейлис|сливочный ликёр/i,17],[/кофейный ликёр/i,20],[/какао/i,25],[/ликёр|шнапс/i,20],[/игрист|шампан|просекко/i,11],[/вино/i,12],[/водка|джин|ром|текила|мескаль|виски|бурбон|скотч|коньяк|бренди|кашаса|писко|граппа|кальвадос/i,40]];
-function strength(d){let vol=0,alc=0;d.ings.forEach(x=>{const m=x.am.match(/^~?(\d+)(?:–(\d+))?$/);let ml=m?+(m[2]||m[1]):(x.am==='долить'?80:0);if(/дэш|капл/.test(x.am))ml=0;vol+=ml;const r=ABV.find(p=>p[0].test(x.a));if(r&&ml)alc+=ml*r[1]/100});const tq=d.sp.tech;const dil=d.sp.f.hot||/кипят|горяч/i.test(d.ing)?0:['shake','dry','muddleS'].includes(tq)?.25:tq==='stir'?.2:tq==='blend'?.3:.1;const tv=vol*(1+dil);return{abv:tv?Math.round(alc/tv*100):0,vol:Math.round(tv/10)*10}}
+function strength(d){if(d.nk)return{abv:d.abv,vol:d.y};let vol=0,alc=0;d.ings.forEach(x=>{const m=x.am.match(/^~?(\d+)(?:–(\d+))?$/);let ml=m?+(m[2]||m[1]):(x.am==='долить'?80:0);if(/дэш|капл/.test(x.am))ml=0;vol+=ml;const r=ABV.find(p=>p[0].test(x.a));if(r&&ml)alc+=ml*r[1]/100});const tq=d.sp.tech;const dil=d.sp.f.hot||/кипят|горяч/i.test(d.ing)?0:['shake','dry','muddleS'].includes(tq)?.25:tq==='stir'?.2:tq==='blend'?.3:.1;const tv=vol*(1+dil);return{abv:tv?Math.round(alc/tv*100):0,vol:Math.round(tv/10)*10}}
 /* ===== Несколько вкусов у коктейля =====
    Основной вкус (поле t) остаётся первым; к нему по составу добавляются ещё до двух вкусов.
    Крепкий бывает сладким или горьким, кислый — фруктовым и т.д. Ручные правки — в TASTE_FIX. */
@@ -505,7 +607,7 @@ if(/мята/i.test(d.ing)&&/содов|газиров|просекко|игри
 const st=strength(d);if(d.b!=='zero'&&st.abv>=24)add('strong',100);
 if(d.sp.f.hot||d.t==='hot'||/кипят|горячий кофе/i.test(d.ing))add('hot',100);
 return{sc,tot:Math.max(tot,1),st}}
-function assignTastes(){D.forEach(d=>{const{sc,tot,st}=tasteScores(d);const pick=[];
+function assignTastes(){D.forEach(d=>{if(d.nk)return;const{sc,tot,st}=tasteScores(d);const pick=[];
 const r=k=>(sc[k]||0)/tot;
 if(sc.strong)pick.push('strong');
 if(sc.hot)pick.push('hot');
@@ -540,16 +642,17 @@ ctx.stroke()}
 function size(){DPR=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);lc.width=W*DPR;lc.height=H*DPR;lctx.setTransform(DPR,0,0,DPR,0,0);
 SAFE_T=Math.max(0,document.getElementById('hdr').offsetTop-12);SAFE_B=Math.max(0,(parseFloat(getComputedStyle(document.getElementById('segw')).bottom)||16)-16);lastHdr='';routeCache=new Map()}
 /* Безалкогольные во всех режимах живут только в своей группе «Без алкоголя». */
-const keysOf=d=>d.hidden?[]:mode=='b'||d.b==='zero'?[d.b]:mode=='t'?d.ts:[d.l,...d.lx2];
-const KORDER={t:[...Object.keys(T),'zero'],l:[1,2,3,4,'few','many','batch','classic','zero']};
+const keysOf=d=>d.hidden||!d.nk!==(world==='c')?[]:d.nk?(mode=='b'?[d.b]:mode=='t'?d.ts:[d.l]):mode=='b'||d.b==='zero'?[d.b]:mode=='t'?d.ts:[d.l,...d.lx2];
+const KORDER={t:[...Object.keys(T).filter(k=>!isN(k)),'zero'],l:[1,2,3,4,'few','many','batch','classic','zero']};
+const KORDER_N={b:Object.keys(B).filter(isN),t:Object.keys(T).filter(isN),l:['n_fast','n_week','n_month','n_long']};
 const glabel=k=>mode=='b'||k==='zero'?bName(k):mode=='t'?tName(k):lName(k);
 const gcol=k=>mode=='b'||k==='zero'?B[k][1]:mode=='t'?TC[k]:LC[k];
-const plural=n=>t('plural')(n);
+const plural=n=>t('plural')(n),pluralW=n=>t(world==='n'?'pluralN':'plural')(n);
 function lattice(m,seed){const dense=m>20;const RY=dense?56:64,ev=dense?[-150,-75,0,75,150]:[-132,-44,44,132],od=dense?[-112,-37,37,112]:[-88,0,88],hole=dense?58:72;let KM=dense?4:3;const R=rng(seed);let pts=[];
 for(;;){pts=[];for(let k=-KM;k<=KM;k++){const y=k*RY;(k%2===0?ev:od).forEach(x=>{const d=Math.hypot(x,y);if(d>=hole)pts.push([x,y,d])})}if(pts.length>=m*1.2||KM>12)break;KM++}
 pts.sort((a,b)=>a[2]-b[2]||a[1]-b[1]||a[0]-b[0]);return{lw:dense?70:84,pts:pts.map(p=>[p[0]+(R()-.5)*5,p[1]+(R()-.5)*5,(R()-.4)*.14])}}
 function blocks(o,s){const so=Math.hypot(s[0],s[1]);const pr=(o[0]*s[0]+o[1]*s[1])/so;if(pr<=8||pr>=so-8)return false;return Math.abs(o[0]*s[1]-o[1]*s[0])/so<21}
-function build(){if(!D[0].ts)assignTastes();const ks=new Set(D.flatMap(keysOf));const keys=KORDER[mode]?KORDER[mode].filter(k=>ks.has(k)):[...ks];const n=keys.length;PL=[];routeCache=new Map();
+function build(){if(!D[0].ts)assignTastes();const ks=new Set(D.flatMap(keysOf));const KO=world==='n'?KORDER_N:KORDER;const keys=KO[mode]?KO[mode].filter(k=>ks.has(k)):[...ks];const n=keys.length;PL=[];routeCache=new Map();
 hubs=keys.map((k,i)=>{const y=(1-2*(i+.5)/n)*.8,r=Math.sqrt(1-y*y),th=i*2.39996;const v=norm([Math.cos(th)*r,y,Math.sin(th)*r]);let u=cross(v,[0,1,0]);if(Math.hypot(...u)<.1)u=[1,0,0];u=norm(u);const w=cross(v,u);return{hub:1,k,n:glabel(k),tgt:v,u,w,pos:[0,0,0],c:gcol(k)}});
 hubs.forEach(h=>{const items=D.filter(d=>keysOf(d).includes(h.k));h.items=items;const pcs=new Map(items.map(d=>[d,{d,hubRef:h,par:null,_lk:null,lx:0,ly:0,dz:0}]));const P=lattice(items.length,h.k+mode);h.lw=P.lw;let free=P.pts.slice();const occ=[],bs=[];
 const set=(d,p)=>{const pc=pcs.get(d);pc.lx=p[0];pc.ly=p[1];pc.dz=p[2];free=free.filter(q=>q!==p);occ.push(p)};const PC=d=>pcs.get(d);const pOf=d=>d.v?items.find(o=>o.n===d.v&&!o.v):null;
@@ -562,11 +665,11 @@ focus=null;sel=null;lastHdr='';inGroup=false;zA=zB=zoom=1;closeSheet();syncUI()}
 const CY0=()=>SAFE_T+(H-SAFE_T-SAFE_B)*.47,CY1=()=>(SAFE_T+66+(H-SAFE_B-58))/2;
 function cpos(d){/* d — размещение коктейля в группе */const h=d.hubRef;const isF=h===focus;const Sg=Math.min(W,H)*.3*ZF;const Ln=Math.hypot(d.lx,d.ly)||1;const ov=(.32+.1*Ln/280)/Ln;const sc=isF?ov+(1/Sg-ov)*E:ov;const dz=d.dz*(isF?1-E:1);return[0,1,2].map(q=>h.pos[q]*(1+dz)+(-h.u[q]*d.lx+h.w[q]*d.ly)*sc)}
 function viewM(){const tx=LIM*Math.tanh(tilt[0]/LIM),ty=LIM*Math.tanh(tilt[1]/LIM);return mm(axr([0,1,0],tx),mm(axr([1,0,0],ty),M))}
-function proj(p,pv,R){const q=mv(R,[p[0]-pv[0],p[1]-pv[1],p[2]-pv[2]]);const S=Math.min(W,H)*.3*zoom;const sp=4/(4-q[2]);const s=1+(sp-1)*(1-E);const cy=CY0()+(CY1()-CY0())*E+panY*E;return{x:W/2+q[0]*S*s,y:cy-q[1]*S*s,z:q[2]}}
+function proj(p,pv,R){const q=mv(R,[p[0]-pv[0],p[1]-pv[1],p[2]-pv[2]]);const S=Math.min(W,H)*.3*zoom;const sp=4/(4-q[2]);const s=1+(sp-1)*(1-E);const cy=CY0()+(CY1()-CY0())*E+panY*E;return{x:W/2+SHX+q[0]*S*s,y:cy-q[1]*S*s,z:q[2]}}
 function frontHub(){let best=null,bz=-9;hubs.forEach(h=>{const z=mv(M,h.tgt)[2];if(z>bz){bz=z;best=h}});return best}
 const colOf=n=>n.hub?NC[n.c]:NC[B[n.b][1]];
 const inAny=d=>lists.some(l=>l.items.has(d.i));
-const relOf=d=>D.filter(o=>o!==d&&(mode=='b'?o.t==d.t:o.b==d.b)&&o.n!==d.v&&o.v!==d.n).slice(0,8);
+const relOf=d=>D.filter(o=>o!==d&&!o.hidden&&!o.nk===!d.nk&&(mode=='b'?o.t==d.t:o.b==d.b)&&o.n!==d.v&&o.v!==d.n).slice(0,8);
 const LF='500 12px "Roboto Condensed", Manrope, sans-serif',LF2='400 11px Manrope, sans-serif';
 function wrapLines(text,font,maxW){ctx.font=font;const words=text.split(' ');const lines=[];let cur='';words.forEach(w=>{const t=cur?cur+' '+w:w;if(ctx.measureText(t).width<=maxW||!cur)cur=t;else{lines.push(cur);cur=w}});if(cur)lines.push(cur);return lines}
 function lbl(pc){const d=pc.d;const ms=bar.size?missOf(d):[];const extra=ms.length===1&&pc.hubRef.lw===84?t('no')+ingN(ms[0]).toLowerCase():'';const k=fontsOk+'|'+pc.hubRef.lw+'|'+extra;if(pc._lk!==k){pc._lk=k;const lines=wrapLines(nm(d),LF,pc.hubRef.lw);ctx.font=LF;let w=Math.max(...lines.map(l=>ctx.measureText(l).width));let ex=null;if(extra){ex=wrapLines(extra,LF2,pc.hubRef.lw+10)[0];ctx.font=LF2;w=Math.max(w,ctx.measureText(ex).width)}pc._lb={lines,ex,w,h:lines.length*14+(ex?13:0)}}return pc._lb}
@@ -575,12 +678,16 @@ function hubLines(h,fs0,r){const k=fs0+'|'+Math.round(r)+'|'+fontsOk;if(h._k!==k
 for(;fs>=6;fs-=.5){const F=`600 ${fs}px "Roboto Condensed", Manrope, sans-serif`;ls=wrapLines(h.n,F,r*1.5);ctx.font=F;const lh=fs*1.15,tot=ls.length*lh;
 const ok=ls.every((t,i)=>{const y=Math.abs((i-(ls.length-1)/2)*lh)+lh/2;const half=Math.sqrt(Math.max(0,(r-5)*(r-5)-y*y));return ctx.measureText(t).width<=half*2})&&tot<=(r-5)*2;if(ok)break}
 h._l={ls,fs}}return h._l}
-function drawSky(){const g=ctx.createRadialGradient(W/2,H*.45,10,W/2,H*.5,Math.max(W,H)*.8);g.addColorStop(0,'#161D3A');g.addColorStop(.6,'#0B1020');g.addColorStop(1,'#05070F');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+/* Небо настоек — та же ночь, но с рыже-розовой дымкой; цвета плавно перетекают при смене карты. */
+const mixC=(a,b,k)=>{const x=parseInt(a.slice(1),16),y=parseInt(b.slice(1),16);const c=sh=>Math.round(((x>>sh)&255)*(1-k)+((y>>sh)&255)*k);return`rgb(${c(16)},${c(8)},${c(0)})`};
+const HAZE=(()=>{const R=rng('haze');return[['#E2703F',.16],['#E0507E',.14],['#F09A5B',.10],['#C0457A',.12],['#E2703F',.09]].map(([c,a])=>({x:R(),y:R(),r:150+R()*170,c,a,d:.15+R()*.3}))})();
+function drawSky(){const g=ctx.createRadialGradient(W/2,H*.45,10,W/2,H*.5,Math.max(W,H)*.8);g.addColorStop(0,mixC('#161D3A','#3A1B2E',skyK));g.addColorStop(.6,mixC('#0B1020','#1A0C1C',skyK));g.addColorStop(1,mixC('#05070F','#09040B',skyK));ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+if(skyK>.01)HAZE.forEach(b=>{const x=((b.x*W+bgx*b.d)%W+W)%W,y=((b.y*H+bgy*b.d)%H+H)%H;const gg=ctx.createRadialGradient(x,y,0,x,y,b.r);gg.addColorStop(0,b.c);gg.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=b.a*skyK;ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,b.r,0,7);ctx.fill()});
 SKY.neb.forEach(b=>{const x=((b.x*W+bgx*b.d)%W+W)%W,y=((b.y*H+bgy*b.d)%H+H)%H;const gg=ctx.createRadialGradient(x,y,0,x,y,b.r);gg.addColorStop(0,b.c);gg.addColorStop(1,'rgba(11,16,32,0)');ctx.globalAlpha=b.a;ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,b.r,0,7);ctx.fill()});
 ctx.fillStyle='#FFFFFF';SKY.stars.forEach(s=>{const x=((s.x*W+bgx*s.d*1.5)%W+W)%W,y=((s.y*H+bgy*s.d*1.5)%H+H)%H;ctx.globalAlpha=s.a;ctx.beginPath();ctx.arc(x,y,s.r,0,7);ctx.fill()});ctx.globalAlpha=1}
 function snapTo(h,k,roll){const r=norm(mv(M,h.tgt));let ax=cross(r,[0,0,1]);const sn=Math.hypot(...ax);const ang=Math.atan2(sn,r[2]);if(ang>1e-4){ax=sn<1e-6?[0,1,0]:ax.map(x=>x/sn);M=mm(axr(ax,ang*k),M)}
 if(roll){const mw=mv(M,h.w);const th=Math.atan2(-mw[0],-mw[1]);if(Math.abs(th)>1e-4)M=mm(axr([0,0,1],th*k),M)}ortho()}
-function syncUI(){document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 16px)':'calc(var(--sb) + 70px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
+function syncUI(){const ws=document.getElementById('wsw');if(ws){ws.style.display=inGroup?'none':'flex';document.getElementById('gname').style.display=inGroup?'block':'none';['prev','next'].forEach(id=>document.getElementById(id).style.visibility=inGroup?'visible':'hidden')}document.getElementById('segw').style.opacity=inGroup?0:1;document.getElementById('segw').style.pointerEvents=inGroup?'none':'auto';document.getElementById('brow').style.bottom=inGroup?'calc(var(--sb) + 16px)':'calc(var(--sb) + 70px)';if(tg&&tg.BackButton){(cardOpen||inGroup)?tg.BackButton.show():tg.BackButton.hide()}lastHdr=''}
 function panBound(){return focus&&focus.maxY?Math.max(0,focus.maxY-(H-SAFE_T-SAFE_B-124)/2):0}
 let panY=0,vpan=0;
 function zoomTo(z){zA=zoom;zB=z;zT0=performance.now()}
@@ -594,6 +701,9 @@ let routeCache=new Map();
 function routeFixed(pc,p,o,obs){const k=routeCache.get(pc);const dx=o.x-p.x,dy=o.y-p.y,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,mx=(p.x+o.x)/2,my=(p.y+o.y)/2;
 if(k!==undefined)return[mx+nx*k,my+ny*k];const c=route(p,o,obs);if(E>=.999&&!drag&&Math.abs(panY)<1&&Math.hypot(tilt[0],tilt[1])<.01)routeCache.set(pc,c[2]);return c}
 function frame(now){if(!W)size();
+/* Смена карты: текущее «созвездие» уезжает в сторону, звёзды проносятся мимо, новое въезжает с другой стороны. */
+if(WT){const p=clamp((now-WT.t0)/1000,0,1);if(p<.5){const e=easeIO(p*2);SHX=-WT.dir*W*1.15*e;FADE=1-e}else{if(!WT.sw){WT.sw=1;world=WT.w;build();applyWorld()}const e=easeIO((p-.5)*2);SHX=WT.dir*W*1.15*(1-e);FADE=e}bgx=WT.bx0-WT.dir*520*easeIO(p);if(p>=1){WT=null;SHX=0;FADE=1}}
+skyK+=((world==='n'?1:0)-skyK)*.045;if(Math.abs(skyK-(world==='n'?1:0))<.002)skyK=world==='n'?1:0;
 const tt=clamp((now-zT0)/800,0,1);zoom=zA+(zB-zA)*easeIO(tt);E=clamp((zoom-1)/(ZF-1),0,1);
 hubs.forEach(h=>{h.pos=h.pos.map((x,i)=>x+(h.tgt[i]-x)*.08)});
 const pv=focus?focus.pos.map(x=>x*E):[0,0,0];if(!inGroup)panY*=.85;
@@ -601,14 +711,14 @@ if(!drag){if(inGroup){snapTo(focus,.12,true);tilt=tilt.map(x=>Math.abs(x)<1e-4?0
 else if(Math.abs(wx)+Math.abs(wy)>4e-4){M=mm(axr([0,1,0],wx),M);M=mm(axr([1,0,0],wy),M);bgx+=wx*40;bgy+=wy*40;wx*=.95;wy*=.95;ortho()}
 else{tilt=tilt.map(x=>x*.86);snapTo(focus||frontHub(),.06,false)}}
 const R=viewM();
-const fh=inGroup&&focus?focus:frontHub();const hdr=fh.n+'|'+inGroup+'|'+mode;
-if(hdr!==lastHdr){lastHdr=hdr;document.getElementById('gname').textContent=fh.n;document.getElementById('gsub').textContent=inGroup?fh.items.length+' '+plural(fh.items.length)+' · '+(panBound()>0?t('subScroll'):t('subG')):t('subOv')}
+const fh=inGroup&&focus?focus:frontHub();const hdr=fh.n+'|'+inGroup+'|'+mode+'|'+world;
+if(hdr!==lastHdr){lastHdr=hdr;document.getElementById('gname').textContent=fh.n;document.getElementById('gsub').textContent=inGroup?fh.items.length+' '+pluralW(fh.items.length)+' · '+(panBound()>0?t('subScroll'):t('subG')):t(world==='n'?'subOvN':'subOv')}
 const oa=1-.97*E,showL=E>.85?(E-.85)/.15:0;
 const nodes=[];
 hubs.forEach(h=>{const p=proj(h.pos,pv,R);const foc=h===focus;const a0=clamp((p.z+1.5)/2.1,.15,1);const al=foc?a0+(1-a0)*E:a0*oa;nodes.push({n:h,hub:1,x:p.x,y:p.y,z:p.z,foc,al,r:foc?HUB0+(HUB1-HUB0)*E:HUB0})});
 PL.forEach(pc=>{const d=pc.d;const p=proj(cpos(pc),pv,R);const foc=pc.hubRef===focus;const a0=clamp((p.z+1.5)/2.1,.15,1);let al=foc?a0+(1-a0)*E:a0*oa;let dim=1;if(!passes(d))dim=.14;else if(bar.size){const ms=missOf(d).length;dim=ms===0?1:ms===1?.62:.32}const o={n:d,pc,x:p.x,y:p.y,z:p.z,foc,al:al*dim,dim,r:foc?DOT+(STAR-DOT)*E:DOT};o.ef=inGroup&&foc&&panBound()>0?clamp((o.y-SAFE_T-104)/50,0,1)*clamp((H-SAFE_B-80-o.y)/50,0,1):1;o.al*=o.ef;
 if(foc&&showL>0){const lb=lbl(pc);const below=pc.ly>=(pc.par?pc.par.ly:0)-12;const top=below?o.y+o.r+5:o.y-o.r-5-lb.h;o.lb=[o.x-lb.w/2,top,lb.w,lb.h];o.lbd=lb}nodes.push(o)});
-const NH=new Map();nodes.forEach(o=>{NH.set(o.hub?o.n:o.pc,o)});
+if(FADE<1)nodes.forEach(o=>{o.al*=FADE});const NH=new Map();nodes.forEach(o=>{NH.set(o.hub?o.n:o.pc,o)});
 drawSky();
 const FN=nodes.filter(o=>o.foc);lctx.clearRect(0,0,W,H);lctx.lineCap='round';
 hubs.forEach(h=>{const a=NH.get(h);h.nb.forEach(o=>{if(h.k>o.k&&o.nb.includes(h))return;const b=NH.get(o);const al=.1*Math.min(a.al,b.al)*(1-E);if(al<.005)return;lctx.globalAlpha=al;lctx.strokeStyle='#CECBF6';lctx.lineWidth=.6;lctx.beginPath();lctx.moveTo(a.x,a.y);lctx.lineTo(b.x,b.y);lctx.stroke()})});
@@ -645,13 +755,23 @@ const dd=N.filter(o=>!o.hub&&o.z>-.1).sort((a,c)=>Math.hypot(a.x-x,a.y-y)-Math.h
 if(now-lastTap.t<330&&Math.hypot(x-lastTap.x,y-lastTap.y)<40){lastTap.t=0;inGroup?exitGroup():enter(frontHub());return}lastTap={t:now,x,y}}
 cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 let wheelLock=0;cv.addEventListener('wheel',e=>{e.preventDefault();const now=performance.now();if(now<wheelLock)return;if(!inGroup&&e.deltaY<-3){enter(frontHub());wheelLock=now+900}else if(inGroup&&panBound()>0&&!e.ctrlKey){panY=clamp(panY-e.deltaY,-panBound(),panBound())}else if(inGroup&&e.deltaY>3){exitGroup();wheelLock=now+900}},{passive:false});
-function openSheet(html,tall){sheet.innerHTML='<div style="width:38px;height:4px;border-radius:2px;background:rgba(220,225,255,.22);margin:0 auto 14px"></div>'+html;sheet.style.minHeight=tall?'88%':'0';sheet.scrollTop=0;if(!cardOpen){cardOpen=true;ov.style.transition='opacity .22s';sheet.style.transition='transform .25s cubic-bezier(.2,.9,.3,1)';ov.style.opacity=1;ov.style.pointerEvents='auto';sheet.style.transform='translateY(0)';syncUI()}sheet.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheet)}
-function closeSheet(){if(cookT)clearInterval(cookT);cookT=null;cardOpen=false;ov.style.transition='opacity .16s';sheet.style.transition='transform .16s ease-in';ov.style.opacity=0;ov.style.pointerEvents='none';sheet.style.transform='translateY(40px)';syncUI()}
+function openSheet(html,tall){sheet.innerHTML='<div id="grab" aria-hidden="true" style="margin:-14px -20px 4px;padding:12px 0 14px;touch-action:none;cursor:grab"><div style="width:38px;height:4px;border-radius:2px;background:rgba(220,225,255,.28);margin:0 auto"></div></div>'+html;sheet.style.minHeight=tall?'88%':'0';sheet.scrollTop=0;if(!cardOpen){cardOpen=true;ov.style.transition='opacity .22s';sheet.style.transition='transform .25s cubic-bezier(.2,.9,.3,1)';ov.style.opacity=1;ov.style.pointerEvents='auto';sheet.style.transform='translateY(0)';syncUI()}sheet.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheet)}
+function closeSheet(full){if(cookT)clearInterval(cookT);cookT=null;cardOpen=false;sd=null;ov.style.transition='opacity '+(full===true?'.22s':'.16s');sheet.style.transition='transform '+(full===true?'.22s ease-out':'.16s ease-in');ov.style.opacity=0;ov.style.pointerEvents='none';sheet.style.transform=full===true?'translateY(100%)':'translateY(40px)';syncUI()}
+/* Свайп вниз закрывает панель: тянуть можно за полоску сверху, а если содержимое пролистано к началу — и за саму панель. */
+let sd=null;
+function sdStart(y){sd={y0:y,dy:0,t:performance.now(),v:0};sheet.style.transition='none';ov.style.transition='none'}
+function sdMove(y){if(!sd)return;const now=performance.now();const dy=Math.max(0,y-sd.y0);sd.v=(dy-sd.dy)/Math.max(1,now-sd.t);sd.t=now;sd.dy=dy;sheet.style.transform=`translateY(${dy}px)`;ov.style.opacity=String(1-.7*Math.min(1,dy/Math.max(200,sheet.offsetHeight)))}
+function sdEnd(){if(!sd)return;const s0=sd;sd=null;if(s0.dy>Math.min(130,sheet.offsetHeight*.3)||(s0.v>.5&&s0.dy>24)){haptic();closeSheet(true)}else{sheet.style.transition='transform .22s cubic-bezier(.2,.9,.3,1)';ov.style.transition='opacity .22s';sheet.style.transform='translateY(0)';ov.style.opacity=1}}
+sheet.addEventListener('pointerdown',e=>{if(!cardOpen||!e.target.closest('#grab'))return;e.preventDefault();sdStart(e.clientY);const mv_=ev=>sdMove(ev.clientY),up_=()=>{window.removeEventListener('pointermove',mv_);window.removeEventListener('pointerup',up_);window.removeEventListener('pointercancel',up_);sdEnd()};window.addEventListener('pointermove',mv_);window.addEventListener('pointerup',up_);window.addEventListener('pointercancel',up_)});
+let tch=null;
+sheet.addEventListener('touchstart',e=>{if(e.touches.length!==1||e.target.closest('#grab')||e.target.closest('input,textarea,select'))return;tch={y:e.touches[0].clientY,x:e.touches[0].clientX,top:sheet.scrollTop<=0,on:false}},{passive:true});
+sheet.addEventListener('touchmove',e=>{if(!tch)return;const y=e.touches[0].clientY,x=e.touches[0].clientX;if(!tch.on){if(!tch.top||sheet.scrollTop>0){tch=null;return}const dy=y-tch.y;if(Math.abs(x-tch.x)>Math.abs(dy)){tch=null;return}if(dy>8){tch.on=true;sdStart(tch.y+8)}else if(dy<-4){tch=null;return}else return}e.preventDefault();sdMove(y)},{passive:false});
+sheet.addEventListener('touchend',()=>{if(tch&&tch.on)sdEnd();tch=null});sheet.addEventListener('touchcancel',()=>{if(tch&&tch.on)sdEnd();tch=null});
 ov.addEventListener('click',e=>{if(e.target===ov)closeSheet()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cardOpen)closeSheet()});
 if(tg){try{tg.ready();tg.expand();tg.disableVerticalSwipes&&tg.disableVerticalSwipes();tg.setHeaderColor&&tg.setHeaderColor('#0B1020');tg.setBackgroundColor&&tg.setBackgroundColor('#0B1020');tg.setBottomBarColor&&tg.isVersionAtLeast&&tg.isVersionAtLeast('7.10')&&tg.setBottomBarColor('#0B1020');tg.BackButton.onClick(()=>{if(cardOpen)closeSheet();else exitGroup()});['viewportChanged','safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'].forEach(ev=>{try{tg.onEvent(ev,()=>{size();fontsOk++;PL.forEach(q=>q._lk=null)})}catch(e){}})}catch(e){}}
 const head=(title,back,extra)=>`<div style="display:flex;gap:8px;align-items:flex-start">${back?`<button class="cl" id="back" aria-label="${t('back')}"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>`:''}<div style="flex:1;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;line-height:1.1;color:#F3F1FF">${title}</div>${extra||''}<button class="cl" data-close aria-label="${t('close')}"><i class="ti ti-x" aria-hidden="true"></i></button></div>`;
-function fCount(){return Object.values(F).filter(Boolean).length}
+function fCount(){return FLw().filter(k=>F[k]).length}
 function updCount(){const f=document.getElementById('fc'),l=document.getElementById('lc'),c=document.getElementById('fltc');f.textContent=fav.size;f.style.display=fav.size?'inline-flex':'none';l.textContent=lists.length;l.style.display=lists.length?'inline-flex':'none';const n=fCount()+(bar.size?1:0);c.textContent=n;c.style.display=n?'inline-flex':'none';PL.forEach(q=>q._lk=null)}
 const chip=o=>`<button class="rc" data-i="${o.i}">${nm(o)}</button>`;
 function bindChips(){sheet.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>showCard(D[+b.dataset.i]))}
@@ -659,8 +779,8 @@ function showCard(d){sel=d;const c=NC[B[d.b][1]];const rel=relOf(d);const parent
 const ings=d.ings.map(x=>ingRow(x,d)).join('');
 const inL=lists.filter(l=>l.items.has(d.i));const isF=fav.has(d.i);const ms=bar.size?missOf(d):null;const note=noteOf(d);
 const favBtn=`<button class="cl" id="fav" aria-label="${t('favs')}" style="${isF?'background:rgba(255,92,176,.22);color:#FFB8DD':''}"><i class="ti ti-heart" aria-hidden="true"></i></button>`;
-openSheet(head(nm(d),false,favBtn)+`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span>${d.lx2.filter(k=>k!=='batch'&&k!=='classic').map(k=>`<span class="tg">${lName(k)}</span>`).join('')}${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src!='cl'&&d.src!='iba'?'#EAD3A6':'#9997B8'}">${d.src=='user'?(lang==='en'?'my cocktail':'мой коктейль'):d.src=='my'?t('mine'):t('classic')}</span>${d.src=='user'?`<button class="rc" id="edc"><i class="ti ti-pencil" aria-hidden="true"></i> ${lang==='en'?'Edit':'Изменить'}</button>`:''}</div>
-<div style="font-size:13px;color:#B9B7D6;margin-top:2px"><i class="ti ti-droplet" aria-hidden="true"></i> ${d.b==='zero'?t('zero'):'≈ '+st.abv+' %'} · ≈ ${st.vol} ${lang==='en'?'ml':'мл'}${d.g==='кувшин'?t('perPitcher'):''}</div>
+openSheet(head(nm(d),false,favBtn)+(d.nk?nTags(d,c):`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span>${d.lx2.filter(k=>k!=='batch'&&k!=='classic').map(k=>`<span class="tg">${lName(k)}</span>`).join('')}${d.g?`<span class="tg">${glN(d.g)}</span>`:''}${d.bt?`<span class="tg">${t('batch')}</span>`:''}<span class="tg" style="color:${d.src!='cl'&&d.src!='iba'?'#EAD3A6':'#9997B8'}">${d.src=='user'?(lang==='en'?'my cocktail':'мой коктейль'):d.src=='my'?t('mine'):t('classic')}</span>${d.src=='user'?`<button class="rc" id="edc"><i class="ti ti-pencil" aria-hidden="true"></i> ${lang==='en'?'Edit':'Изменить'}</button>`:''}</div>
+<div style="font-size:13px;color:#B9B7D6;margin-top:2px"><i class="ti ti-droplet" aria-hidden="true"></i> ${d.b==='zero'?t('zero'):'≈ '+st.abv+' %'} · ≈ ${st.vol} ${lang==='en'?'ml':'мл'}${d.g==='кувшин'?t('perPitcher'):''}</div>`)+`
 ${ms?`<div style="margin-top:10px;font-size:14px;padding:9px 12px;border-radius:12px;background:${ms.length?'rgba(255,122,61,.1)':'rgba(155,219,46,.12)'};color:${ms.length?'#FFC2A3':'#D6F59A'}">${ms.length?t('missing')+ms.map(x=>ingN(x).toLowerCase()).join(', '):t('canMake')}</div>`:''}
 <div style="margin-top:12px;display:flex;gap:8px"><button class="big" id="cook"><i class="ti ti-glass-full" style="font-size:18px" aria-hidden="true"></i>${t('cook')}</button><button class="sec" id="addl" style="height:46px;${inL.length?'color:#EAD3A6;border-color:rgba(234,211,166,.5)':''}"><i class="ti ti-${inL.length?'bookmark':'bookmark-plus'}" style="font-size:18px" aria-hidden="true"></i>${inL.length?t('inList'):t('toList')}</button></div>
 <div class="lab">${t('ings')}</div><div style="margin-top:4px">${ings}</div>
@@ -669,12 +789,12 @@ ${note?`<div style="margin-top:12px;font-size:13px;color:#EAD3A6;line-height:1.5
 <div class="lab">${t('notes')}</div><textarea id="nt" rows="2" placeholder="${t('notesPh')}" style="width:100%;margin-top:6px;box-sizing:border-box;border-radius:12px;border:0.5px solid rgba(220,225,255,.2);background:rgba(220,225,255,.05);color:#EEEDFE;padding:10px 12px;font-size:14px;resize:vertical">${esc(notes[d.i]||'')}</textarea>
 ${parent?`<div class="lab">${t('varOf')}</div><div style="margin-top:8px">${chip(parent)}</div>`:''}
 ${kids.length?`<div class="lab">${t('vars')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${kids.map(chip).join('')}</div>`:''}
-${rel.length?`<div class="lab">${t('also')+(mode=='b'?tName(d.t):bName(d.b)).toLowerCase()}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${rel.map(chip).join('')}</div>`:''}`);
+${rel.length?`<div class="lab">${d.nk?(lang==='en'?'More infusions':'Ещё настойки'):t('also')+(mode=='b'?tName(d.t):bName(d.b)).toLowerCase()}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${rel.map(chip).join('')}</div>`:''}`);
 sheet.querySelector('#addl').onclick=()=>showAdd(d);const ec=sheet.querySelector('#edc');if(ec)ec.onclick=()=>showEditor(d);sheet.querySelector('#cook').onclick=()=>showCook(d,0);sheet.querySelector('#fav').onclick=()=>{isF?fav.delete(d.i):fav.add(d.i);haptic();updCount();showCard(d)};sheet.querySelector('#nt').oninput=e=>{const v=e.target.value;if(v)notes[d.i]=v;else delete notes[d.i]};bindChips()}
 let cookT=null;
 function showCook(d,step){if(cookT){clearInterval(cookT);cookT=null}const stp=steps(d);const total=stp.length+1;
 let body;if(step===0){body=`<div style="font-size:15px;color:#B9B7D6;margin-bottom:6px">${t('prep')}</div>${d.ings.map((x,i)=>`<div class="row" data-ck="${i}" style="font-size:19px"><i class="ti ti-circle" style="font-size:24px;color:#6F6D8E" aria-hidden="true"></i><span style="flex:1">${ingN(x.a)}</span><span style="color:#EAD3A6;font-size:18px;white-space:nowrap">${amtL(x.am)}</span></div>`).join('')}${d.g?`<div style="margin-top:12px;font-size:15px;color:#B9B7D6">${t('glass')}${glN(d.g)}</div>`:''}`}
-else{const s=stp[step-1];body=`<div style="font-size:23px;line-height:1.5;color:#F3F1FF;padding:18px 0">${s}</div>${/встряхив|shake/i.test(s)?`<button class="sec" id="tmr" style="width:100%;height:52px;font-size:16px"><i class="ti ti-clock" aria-hidden="true"></i>${t('timer')}</button>`:''}`}
+else{const s=stp[step-1];body=`<div style="font-size:23px;line-height:1.5;color:#F3F1FF;padding:18px 0">${s}</div>${!d.nk&&/встряхив|shake/i.test(s)?`<button class="sec" id="tmr" style="width:100%;height:52px;font-size:16px"><i class="ti ti-clock" aria-hidden="true"></i>${t('timer')}</button>`:''}`}
 openSheet(head(nm(d),true)+`<div style="font-size:12px;color:#8E8CAE;margin-top:6px">${t('bm')} ${step+1} ${t('of')} ${total}</div><div style="height:3px;border-radius:2px;background:rgba(220,225,255,.1);margin-top:8px"><div style="height:3px;border-radius:2px;background:#EAD3A6;width:${(step+1)/total*100}%"></div></div><div style="margin-top:12px;min-height:300px">${body}</div><div style="display:flex;gap:8px;margin-top:16px">${step>0?`<button class="sec" id="pv" style="height:52px;flex:none;width:110px">${t('back')}</button>`:''}<button class="big" id="nx" style="height:52px">${step+1<total?t('next'):t('done')}</button></div>`,true);
 sheet.querySelector('#back').onclick=()=>showCard(d);if(step>0)sheet.querySelector('#pv').onclick=()=>showCook(d,step-1);sheet.querySelector('#nx').onclick=()=>{haptic();step+1<total?showCook(d,step+1):showCard(d)};
 sheet.querySelectorAll('[data-ck]').forEach(r=>r.onclick=()=>{const i=r.querySelector('i');const on=i.classList.contains('ti-circle');i.className='ti '+(on?'ti-circle-check':'ti-circle');i.style.color=on?'#EAD3A6':'#6F6D8E';r.style.opacity=on?.55:1;haptic()});
@@ -686,8 +806,8 @@ function bindNew(id,onDone){const inp=sheet.querySelector('#'+id),err=sheet.quer
 function showAdd(d){openSheet(head(t('whichList'),true)+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${nm(d)}</div><div style="margin-top:8px">${lists.length?lists.map(l=>{const on=l.items.has(d.i);return`<div class="row" data-l="${l.id}"><i class="ti ${on?'ti-circle-check':'ti-circle'}" style="font-size:24px;color:${on?'#EAD3A6':'#6F6D8E'}" aria-hidden="true"></i><span style="flex:1">${esc(l.name)}</span><span style="font-size:13px;color:#8E8CAE">${l.items.size}</span></div>`}).join(''):`<div style="font-size:14px;color:#B9B7D6;padding:8px 0;line-height:1.6">${t('noLists')}</div>`}</div>
 <div class="lab">${t('newList')}</div>${newListForm('nl')}<div style="margin-top:16px;display:flex"><button class="big" id="done">${t('done')}</button></div>`);
 sheet.querySelector('#back').onclick=()=>showCard(d);sheet.querySelector('#done').onclick=()=>showCard(d);
-sheet.querySelectorAll('[data-l]').forEach(r=>r.onclick=()=>{const l=lists.find(x=>x.id==r.dataset.l);l.items.has(d.i)?l.items.delete(d.i):l.items.set(d.i,l.def);haptic();showAdd(d)});
-bindNew('nl',l=>{l.items.set(d.i,l.def);showAdd(d)})}
+sheet.querySelectorAll('[data-l]').forEach(r=>r.onclick=()=>{const l=lists.find(x=>x.id==r.dataset.l);l.items.has(d.i)?l.items.delete(d.i):l.items.set(d.i,d.nk?1:l.def);haptic();showAdd(d)});
+bindNew('nl',l=>{l.items.set(d.i,d.nk?1:l.def);showAdd(d)})}
 const fmtNum=x=>String(x).replace('.',t('dec'));
 const fmtMl=ml=>{const u=lang==='en'?['l','ml']:['л','мл'];return ml>=1000?fmtNum(Math.round(ml/100)/10)+' '+u[0]:Math.round(ml)+' '+u[1]};
 const JUICE={'Лимонный сок':['Лимоны',30],'Сок лайма':['Лаймы',25],'Апельсиновый сок':['Апельсины',80],'Грейпфрутовый сок':['Грейпфруты',150]};
@@ -700,7 +820,7 @@ m=am.match(/^(½|\d+)(?:–(\d+))?\s*(.+)$/);if(m){const n=m[2]?+m[2]:(m[1]==='�
 const X={'долька':[1,'долька'],'долить':[80,'мл'],'несколько листьев':[.5,'вет'],'слой':[15,'мл'],'шапка':[20,'мл'],'для подачи':[1,'гарнир'],'для ополаскивания':[5,'мл'],'для посыпки':[5,'мл'],'по вкусу':[1,'вет']};return X[am]?{n:X[am][0],u:X[am][1]}:{n:0,u:''}}
 const portions=(l,i)=>l.items.get(i)||1;
 function shopCalc(l){const acc={};let ice=0,serv=0;
-[...l.items.keys()].forEach(i=>{const d=D[i],k=portions(l,i);serv+=k;if(d.t!=='hot')ice+=d.g==='кувшин'?k:k*.2;
+[...l.items.keys()].filter(i=>!D[i].nk).forEach(i=>{const d=D[i],k=portions(l,i);serv+=k;if(d.t!=='hot')ice+=d.g==='кувшин'?k:k*.2;
 d.ings.forEach(x=>{if(['Вода','Кипяток','Соль','Соль и перец'].includes(x.a))return;const q=parseAm(x.am);if(!q.n)return;const nmc=canon(x.a);const a=acc[nmc]=acc[nmc]||{};a[q.u]=(a[q.u]||0)+q.n*k})});
 const bottles=[],items={},other=[];const addI=(name,n,unit,note)=>{const it=items[name]=items[name]||{n:0,unit,notes:[]};it.n+=n;if(note)it.notes.push(note)};
 Object.entries(acc).forEach(([name,a])=>{
@@ -719,18 +839,18 @@ other.push({name,txt:fmtMl(ml)})});
 const fruits=Object.entries(items).map(([name,it])=>{const n=Math.ceil(it.n-1e-9);const txt=it.unit==='вет'?`${n} ${t('sprigs')} (≈ ${Math.ceil(n/10)} ${t('bunch')})`:n+' '+t(it.unit);return{name,txt,sub:it.notes.filter(Boolean).join(' + ')}});
 const srt=a=>a.sort((x,y)=>ingN(x.name).localeCompare(ingN(y.name),lang));return{bottles:srt(bottles),fruits:srt(fruits),other:srt(other),ice:Math.ceil(ice*2)/2,serv}}
 function shopRow(r){const have=bar.has(r.name)?` <span style="color:#9BDB2E;font-size:12px">${t('home')}</span>`:'';return`<div style="display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:0.5px solid rgba(220,225,255,.08)"><div style="flex:1;min-width:0"><div style="font-size:15px;color:#EEEDFE">${ingN(r.name)}${have}</div>${r.sub?`<div style="font-size:12px;color:#8E8CAE;margin-top:1px">${r.sub}</div>`:''}</div><div style="font-size:15px;color:#EAD3A6;white-space:nowrap;font-weight:500">${r.txt}</div></div>`}
-function shopping(l){const s=shopCalc(l);const sec=(ti,ic,rows)=>rows.length?`<div style="display:flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;color:#C9C7E2;font-weight:600"><i class="ti ti-${ic}" aria-hidden="true"></i>${ti}</div><div style="margin-top:2px">${rows.map(shopRow).join('')}</div>`:'';
-return`<div style="font-size:12px;color:#8E8CAE;margin-top:10px">${t('shopNote')(s.serv)}</div>`+sec(t('secB'),'bottle',s.bottles)+sec(t('secF'),'lemon',s.fruits)+sec(t('secO'),'droplet',s.other)+(s.ice?sec(t('ice'),'snowflake',[{name:'Лёд',txt:'≈ '+fmtNum(s.ice)+' '+t('kg')}]):'')}
+function shopping(l){const s=shopCalc(l),sn=shopCalcN(l);const sec=(ti,ic,rows)=>rows.length?`<div style="display:flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;color:#C9C7E2;font-weight:600"><i class="ti ti-${ic}" aria-hidden="true"></i>${ti}</div><div style="margin-top:2px">${rows.map(shopRow).join('')}</div>`:'';
+return(s.serv?`<div style="font-size:12px;color:#8E8CAE;margin-top:10px">${t('shopNote')(s.serv)}</div>`+sec(t('secB'),'bottle',s.bottles)+sec(t('secF'),'lemon',s.fruits)+sec(t('secO'),'droplet',s.other)+(s.ice?sec(t('ice'),'snowflake',[{name:'Лёд',txt:'≈ '+fmtNum(s.ice)+' '+t('kg')}]):''):'')+(sn.nb?sec(t('secN'),'flask',sn.rows)+`<div style="margin-top:10px;font-size:13px;line-height:1.55;color:#F2B096;padding:9px 12px;border-radius:12px;background:rgba(242,176,150,.09)"><i class="ti ti-calendar" aria-hidden="true"></i> ${t('startBy')(sn.maxD)}<br><i class="ti ti-flask" aria-hidden="true"></i> ${t('jars')(sn.jars)}</div>`:'')}
 const stepper=(attr,id,val,label)=>`<div style="display:flex;align-items:center;gap:6px;flex:none"><button class="cl" style="width:32px;height:32px;font-size:16px" data-${attr}m="${id}" aria-label="−"><i class="ti ti-minus" aria-hidden="true"></i></button><span style="min-width:48px;text-align:center;font-size:14px;color:#F3F1FF"><b style="font-weight:600;font-size:16px">${val}</b> ${label}</span><button class="cl" style="width:32px;height:32px;font-size:16px" data-${attr}p="${id}" aria-label="+"><i class="ti ti-plus" aria-hidden="true"></i></button></div>`;
-function showLists(){openSheet(head(t('lists'))+(lists.length?lists.map(l=>{const ids=[...l.items.keys()];const tot=ids.reduce((s,i)=>s+portions(l,i),0);return`<div style="margin-top:14px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#F3F1FF">${esc(l.name)}</div><span style="font-size:13px;color:#8E8CAE">${l.items.size} ${plural(l.items.size)}</span><button class="cl" data-del="${l.id}" aria-label="×"><i class="ti ti-trash" aria-hidden="true"></i></button></div>
+function showLists(){openSheet(head(t('lists'))+(lists.length?lists.map(l=>{const ids=[...l.items.keys()];const tot=ids.filter(i=>!D[i].nk).reduce((s,i)=>s+portions(l,i),0),totN=ids.filter(i=>D[i].nk).reduce((s,i)=>s+portions(l,i),0);return`<div style="margin-top:14px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#F3F1FF">${esc(l.name)}</div><span style="font-size:13px;color:#8E8CAE">${l.items.size} ${plural(l.items.size)}</span><button class="cl" data-del="${l.id}" aria-label="×"><i class="ti ti-trash" aria-hidden="true"></i></button></div>
 ${ids.length?`<div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:12px;background:rgba(234,211,166,.07)"><span style="flex:1;font-size:13px;color:#EAD3A6">${t('all')}</span>${stepper('a',l.id,l.def,t('serv'))}</div>
-<div style="margin-top:4px">${ids.map(i=>{const d=D[i];return`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid rgba(220,225,255,.08)"><button data-i="${i}" style="flex:1;min-width:0;text-align:left;background:none;border:none;color:#EEEDFE;font-size:15px;cursor:pointer;padding:0;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${NC[B[d.b][1]][1]};flex:none"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm(d)}</span></button>${stepper('c',l.id+':'+i,portions(l,i),d.g==='кувшин'?t('pitch'):t('serv'))}</div>`}).join('')}</div>
-<div style="font-size:12px;color:#8E8CAE;margin-top:6px">${t('total')}${tot}</div>
+<div style="margin-top:4px">${ids.map(i=>{const d=D[i];return`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid rgba(220,225,255,.08)"><button data-i="${i}" style="flex:1;min-width:0;text-align:left;background:none;border:none;color:#EEEDFE;font-size:15px;cursor:pointer;padding:0;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${NC[B[d.b][1]][1]};flex:none"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nm(d)}</span></button>${stepper('c',l.id+':'+i,portions(l,i),d.nk?t('bat'):d.g==='кувшин'?t('pitch'):t('serv'))}</div>`}).join('')}</div>
+<div style="font-size:12px;color:#8E8CAE;margin-top:6px">${tot?t('total')+tot:''}${tot&&totN?' · ':''}${totN?t('nastLine')(totN):''}</div>
 <div style="display:flex;gap:8px;margin-top:10px"><button class="sec" data-shop="${l.id}" style="flex:1"><i class="ti ti-shopping-bag" aria-hidden="true"></i>${l.shop?t('hideShop'):t('shop')}</button><button class="sec" data-share="${l.id}" style="flex:1"><i class="ti ti-send" aria-hidden="true"></i>${t('share')}</button></div>${l.shop?shopping(l):''}`:`<div style="font-size:13px;color:#8E8CAE;margin-top:8px">${t('listEmpty')}</div>`}</div>`}).join(''):`<div style="font-size:15px;color:#B9B7D6;margin-top:12px;line-height:1.65">${t('listsIntro')}</div>`)+`<div class="lab">${t('newList')}</div>`+newListForm('nl2'));
 bindNew('nl2',()=>showLists());bindChips();const L_=id=>lists.find(x=>x.id==id);const re=()=>{const y=sheet.scrollTop;showLists();sheet.scrollTop=y};
 sheet.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{lists=lists.filter(l=>l.id!=b.dataset.del);updCount();re()});
 sheet.querySelectorAll('[data-shop]').forEach(b=>b.onclick=()=>{const l=L_(b.dataset.shop);l.shop=!l.shop;re()});
-sheet.querySelectorAll('[data-am],[data-ap]').forEach(b=>b.onclick=()=>{const l=L_(b.dataset.am||b.dataset.ap);l.def=clamp(l.def+(b.dataset.am?-1:1),1,99);l.items.forEach((v,k)=>l.items.set(k,l.def));haptic();re()});
+sheet.querySelectorAll('[data-am],[data-ap]').forEach(b=>b.onclick=()=>{const l=L_(b.dataset.am||b.dataset.ap);l.def=clamp(l.def+(b.dataset.am?-1:1),1,99);l.items.forEach((v,k)=>{if(!D[k].nk)l.items.set(k,l.def)});haptic();re()});
 sheet.querySelectorAll('[data-cm],[data-cp]').forEach(b=>b.onclick=()=>{const[li,i]=(b.dataset.cm||b.dataset.cp).split(':');const l=L_(li);l.items.set(+i,clamp(portions(l,+i)+(b.dataset.cm?-1:1),1,99));haptic();re()});
 sheet.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>showShare(L_(b.dataset.share)))}
 /* Ссылка меню: коктейли кодируются коротким стабильным номером (позиция в общей базе, base36) и числом порций. */
@@ -741,10 +861,10 @@ sheet.querySelector('#back').onclick=showLists;sheet.querySelector('#cp').onclic
 const rowHtml=d=>`<div class="row" data-i="${d.i}"><span style="width:10px;height:10px;border-radius:50%;background:${NC[B[d.b][1]][1]};flex:none"></span><span style="flex:1">${nm(d)}</span><span style="font-size:12px;color:#8E8CAE">${bName(d.b)}</span></div>`;
 function showFavs(){const f=[...fav].map(i=>D[i]).filter(d=>!d.hidden);openSheet(head(t('favs'))+(f.length?`<div style="margin-top:8px">${f.map(rowHtml).join('')}</div>`:`<div style="font-size:15px;color:#B9B7D6;margin-top:12px;line-height:1.65">${t('favEmpty')}</div>`));bindChips()}
 /* поиск — в 06b-extra.js */
-const FL=['can','noEgg','noDairy','batch','mine','zero'];
-function showFilters(){const canN=bar.size?D.filter(d=>!missOf(d).length).length:0;
-openSheet(head(t('filters'))+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${t('filtHint')}</div><div style="margin-top:12px;display:flex;flex-wrap:wrap">${FL.map(k=>`<button class="tgl${F[k]?' on':''}" data-f="${k}">${t('f_'+k)}</button>`).join('')}</div>${F.can&&!bar.size?`<div style="font-size:13px;color:#FFC2A3;margin-top:2px">${t('barFirst')}</div>`:''}
-<div class="lab">${t('myBar')}</div><div style="margin-top:8px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)"><div style="font-size:15px;line-height:1.55;color:#DCDAF0">${bar.size?t('barStat')(bar.size,canN,plural(canN)):t('barIntro')}</div><div style="margin-top:10px;display:flex;gap:8px"><button class="big" id="barb"><i class="ti ti-bottle" aria-hidden="true"></i>${bar.size?t('barEdit'):t('barSet')}</button>${bar.size?`<button class="sec" id="barc">${t('clear')}</button>`:''}</div></div>
+const FL=['can','noEgg','noDairy','batch','mine','zero'],FLN=['can','nFast','nNoSugar','nSoft'];const FLw=()=>world==='n'?FLN:FL;
+function showFilters(){const FL=FLw();const canN=bar.size?D.filter(d=>!d.hidden&&!d.nk===(world==='c')&&!missOf(d).length).length:0;
+openSheet(head(t('filters'))+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${t(world==='n'?'filtHintN':'filtHint')}</div><div style="margin-top:12px;display:flex;flex-wrap:wrap">${FL.map(k=>`<button class="tgl${F[k]?' on':''}" data-f="${k}">${t('f_'+k)}</button>`).join('')}</div>${F.can&&!bar.size?`<div style="font-size:13px;color:#FFC2A3;margin-top:2px">${t('barFirst')}</div>`:''}
+<div class="lab">${t('myBar')}</div><div style="margin-top:8px;padding:14px;border-radius:16px;background:rgba(220,225,255,.04);border:0.5px solid rgba(220,225,255,.1)"><div style="font-size:15px;line-height:1.55;color:#DCDAF0">${bar.size?t('barStat')(bar.size,canN,pluralW(canN)):t(world==='n'?'barIntroN':'barIntro')}</div><div style="margin-top:10px;display:flex;gap:8px"><button class="big" id="barb"><i class="ti ti-bottle" aria-hidden="true"></i>${bar.size?t('barEdit'):t('barSet')}</button>${bar.size?`<button class="sec" id="barc">${t('clear')}</button>`:''}</div></div>
 ${fCount()?`<div style="margin-top:14px"><button class="sec" id="fr" style="width:100%">${t('reset')}</button></div>`:''}`);
 sheet.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{F[b.dataset.f]=!F[b.dataset.f];haptic();updCount();showFilters()});
 sheet.querySelector('#barb').onclick=showBar;const bc=sheet.querySelector('#barc');if(bc)bc.onclick=()=>{bar.clear();updCount();showFilters()};const fr=sheet.querySelector('#fr');if(fr)fr.onclick=()=>{FL.forEach(k=>F[k]=false);updCount();showFilters()}}
@@ -752,8 +872,8 @@ function showBar(){const groups=t('cats').map((c,ci)=>({c,items:ALLING.filter(n=
 openSheet(head(t('myBar'),true)+`<div style="font-size:14px;color:#9997B8;margin-top:6px">${t('marked')}<span id="bn">${bar.size}</span>. ${t('always')}</div>${groups.map(g=>`<div class="lab">${g.c}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${g.items.map(n=>`<button class="tgl${bar.has(n)?' on':''}" data-b="${esc(n)}">${esc(ingN(n))}</button>`).join('')}</div>`).join('')}<div style="margin-top:16px;display:flex"><button class="big" id="bd">${t('done')}</button></div>`);
 sheet.querySelector('#back').onclick=showFilters;sheet.querySelector('#bd').onclick=showFilters;
 sheet.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{const n=b.dataset.b;bar.has(n)?bar.delete(n):bar.add(n);b.classList.toggle('on',bar.has(n));sheet.querySelector('#bn').textContent=bar.size;updCount()})}
-function showRandom(){const base=(inGroup&&focus?focus.items:D).filter(d=>!d.hidden);let pool=base.filter(passes);if(!pool.length)pool=base;showCard(pool[Math.floor(Math.random()*pool.length)])}
-function applyStatic(){document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});document.getElementById('lng').textContent=lang==='ru'?'EN':'RU';document.getElementById('lng0').textContent=lang==='ru'?'English':'Русский';document.documentElement.lang=lang}
+function showRandom(){const base=(inGroup&&focus?focus.items:D).filter(d=>!d.hidden&&!d.nk===(world==='c'));let pool=base.filter(passes);if(!pool.length)pool=base;showCard(pool[Math.floor(Math.random()*pool.length)])}
+function applyStatic(){document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t)});const sl=document.querySelector('.seg[data-m=l]');if(sl)sl.textContent=t(world==='n'?'segLn':'segL');document.querySelectorAll('.wsb').forEach(b=>{const on=b.dataset.w===world;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});document.getElementById('lng').textContent=lang==='ru'?'EN':'RU';document.getElementById('lng0').textContent=lang==='ru'?'English':'Русский';document.documentElement.lang=lang}
 function setLang(l){lang=l;applyStatic();fontsOk++;PL.forEach(q=>q._lk=null);hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';if(cardOpen)closeSheet();updCount();haptic('sel')}
 document.getElementById('lng').onclick=()=>setLang(lang==='ru'?'en':'ru');document.getElementById('lng0').onclick=()=>setLang(lang==='ru'?'en':'ru');
 document.getElementById('terms').onclick=showTerms;document.getElementById('favs').onclick=showFavs;document.getElementById('mylists').onclick=showLists;document.getElementById('srch').onclick=showSearch;document.getElementById('rnd').onclick=showRandom;document.getElementById('flt').onclick=showFilters;
@@ -819,19 +939,19 @@ TERMS.map(x=>{const [n,txt]=x[lang];return`<div style="margin-top:16px;padding:1
 /* Основа — «или» внутри группы; вкусы и группы сложности — «и» (сладкие + малосоставные + водка). */
 const SF={b:new Set(),t:new Set(),l:new Set(),open:false};
 const tagsL=d=>[d.l,...(d.lx2||[])];
-function searchHits(q){return D.filter(d=>!d.hidden).filter(d=>{if(SF.b.size&&!SF.b.has(d.b))return false;for(const k of SF.t)if(!d.ts.includes(k))return false;for(const k of SF.l)if(!tagsL(d).includes(k))return false;
+function searchHits(q){return D.filter(d=>!d.hidden&&!d.nk===(world==='c')).filter(d=>{if(SF.b.size&&!SF.b.has(d.b))return false;for(const k of SF.t)if(!d.ts.includes(k))return false;for(const k of SF.l)if(!tagsL(d).includes(k))return false;
 if(!q)return true;return(d.n+'|'+(EN[d.n]?EN[d.n][0]:'')+'|'+d.ings.map(x=>x.a+'|'+(ING_EN[x.a]||'')).join('|')).toLowerCase().includes(q)})}
 function showSearch(){const nF=SF.b.size+SF.t.size+SF.l.size;const chips=(set,keys,lab,kind)=>keys.map(k=>`<button class="tgl${set.has(k)?' on':''}" data-sf="${kind}:${k}">${esc(lab(k))}</button>`).join('');
 openSheet(head(t('search'))+`<input class="din" id="q" placeholder="${t('searchPh')}" style="width:100%;margin-top:12px" value="${esc(SF.q||'')}">
-<div style="display:flex;gap:8px;margin-top:10px"><button class="sec" id="sft" style="flex:1"><i class="ti ti-adjustments-horizontal" aria-hidden="true"></i>${lang==='en'?'Filters':'Фильтры'}${nF?` · ${nF}`:''}</button><button class="sec" id="addc" style="flex:1"><i class="ti ti-plus" aria-hidden="true"></i>${lang==='en'?'My cocktail':'Свой коктейль'}</button></div>
-<div id="sfp" style="display:${SF.open?'block':'none'}"><div class="lab">${t('segB')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.b,Object.keys(B),bName,'b')}</div>
-<div class="lab">${t('segT')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.t,Object.keys(T),tName,'t')}</div>
-<div class="lab">${t('segL')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.l,[1,2,3,4,'few','many','batch','classic'],lName,'l')}</div>${nF?`<button class="sec" id="sfr" style="width:100%;margin-top:6px">${t('reset')}</button>`:''}</div>
+<div style="display:flex;gap:8px;margin-top:10px"><button class="sec" id="sft" style="flex:1"><i class="ti ti-adjustments-horizontal" aria-hidden="true"></i>${lang==='en'?'Filters':'Фильтры'}${nF?` · ${nF}`:''}</button>${world==='n'?'':`<button class="sec" id="addc" style="flex:1"><i class="ti ti-plus" aria-hidden="true"></i>${lang==='en'?'My cocktail':'Свой коктейль'}</button>`}</div>
+<div id="sfp" style="display:${SF.open?'block':'none'}"><div class="lab">${t('segB')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.b,Object.keys(B).filter(k=>isN(k)===(world==='n')),bName,'b')}</div>
+<div class="lab">${t('segT')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.t,Object.keys(T).filter(k=>isN(k)===(world==='n')),tName,'t')}</div>
+<div class="lab">${t(world==='n'?'segLn':'segL')}</div><div style="margin-top:8px;display:flex;flex-wrap:wrap">${chips(SF.l,world==='n'?KORDER_N.l:[1,2,3,4,'few','many','batch','classic'],lName,'l')}</div>${nF?`<button class="sec" id="sfr" style="width:100%;margin-top:6px">${t('reset')}</button>`:''}</div>
 <div id="res" style="margin-top:6px"></div>`);const q=sheet.querySelector('#q'),res=sheet.querySelector('#res');
-const run=()=>{const s=q.value.trim().toLowerCase();SF.q=q.value;const nf=SF.b.size+SF.t.size+SF.l.size;if(!s&&!nf){res.innerHTML=`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('searchHint')} ${lang==='en'?'Filters combine: e.g. Sweet + Few ingredients + Vodka.':'Фильтры складываются: например, Сладкие + Малосоставные + Водка.'}</div>`;return}
+const run=()=>{const s=q.value.trim().toLowerCase();SF.q=q.value;const nf=SF.b.size+SF.t.size+SF.l.size;if(!s&&!nf){res.innerHTML=`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('searchHint')} ${world==='n'?(lang==='en'?'Filters combine: e.g. Berry + About a week.':'Фильтры складываются: например, Ягодные + Неделя.'):(lang==='en'?'Filters combine: e.g. Sweet + Few ingredients + Vodka.':'Фильтры складываются: например, Сладкие + Малосоставные + Водка.')}</div>`;return}
 const f=searchHits(s);res.innerHTML=`<div style="font-size:12px;color:#8E8CAE;margin:8px 0 2px">${lang==='en'?'Found':'Найдено'}: ${f.length}</div>`+(f.length?f.map(rowHtml).join(''):`<div style="font-size:14px;color:#8E8CAE;padding:10px 0">${t('nothing')}</div>`);bindChips()};
 q.oninput=run;run();
-sheet.querySelector('#sft').onclick=()=>{SF.open=!SF.open;showSearch()};sheet.querySelector('#addc').onclick=()=>showEditor(null);
+sheet.querySelector('#sft').onclick=()=>{SF.open=!SF.open;showSearch()};const ac=sheet.querySelector('#addc');if(ac)ac.onclick=()=>showEditor(null);
 const r=sheet.querySelector('#sfr');if(r)r.onclick=()=>{SF.b.clear();SF.t.clear();SF.l.clear();showSearch()};
 sheet.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{const[kind,k0]=b.dataset.sf.split(':');const k=kind==='l'&&/^\d$/.test(k0)?+k0:k0;const set=SF[kind];set.has(k)?set.delete(k):set.add(k);haptic('sel');const y=sheet.scrollTop;showSearch();sheet.scrollTop=y});
 if(!SF.open)setTimeout(()=>q.focus(),260)}
@@ -840,7 +960,7 @@ if(!SF.open)setTimeout(()=>q.focus(),260)}
 const USER=[];/* сохраняемое описание: {n,b,ts,l,bt,g,ings:[[a,am]],steps:[]} */
 /* Пользовательский текст очищается от символов разметки — он выводится в HTML. */
 const clean=(x,n)=>String(x||'').replace(/[<>&"`]/g,'').slice(0,n||80);
-function userToD(u,existing){u.n=clean(u.n,40);u.g=clean(u.g,30);u.ings=u.ings.map(([a,am])=>[clean(a,40),clean(am,30)]);u.steps=u.steps.map(x=>clean(x,300));if(!B[u.b])u.b='vodka';u.ts=(u.ts||[]).filter(k=>T[k]);if(!u.ts.length)u.ts=['sweet'];u.l=[1,2,3,4].includes(+u.l)?+u.l:2;
+function userToD(u,existing){u.n=clean(u.n,40);u.g=clean(u.g,30);u.ings=u.ings.map(([a,am])=>[clean(a,40),clean(am,30)]);u.steps=u.steps.map(x=>clean(x,300));if(!B[u.b]||isN(u.b))u.b='vodka';u.ts=(u.ts||[]).filter(k=>T[k]&&!isN(k));if(!u.ts.length)u.ts=['sweet'];u.l=[1,2,3,4].includes(+u.l)?+u.l:2;
 const d=existing||{i:D.length};Object.assign(d,{n:u.n,b:u.b,t:u.ts[0],ts:u.ts.slice(0,3),l:u.l,g:u.g||'',ing:u.ings.map(([a,am])=>a+'|'+am).join(';'),m:u.steps.join(' '),note:'',bt:u.bt?1:0,src:'user',v:'',hidden:false,ings:u.ings.map(([a,am])=>({a,am})),sp:parseSp('custom L='+u.l),u});
 const cnt=d.ings.filter(x=>!isOpt(x.am)&&!/^(Лёд|Вода|Кипяток|Соль|Соль и перец)$/.test(x.a)).length;d.cnt=cnt;d.lx2=[];if(cnt<=3)d.lx2.push('few');if(cnt>=6)d.lx2.push('many');if(d.bt)d.lx2.push('batch');
 EN[d.n]=[d.n,d.m,''];CUSTOM[d.n]={ru:u.steps,en:u.steps};if(!existing)D.push(d);BYNAME.set(d.n,d);
@@ -851,8 +971,8 @@ const lab=(ru,en)=>`<div class="lab">${E_?en:ru}</div>`;
 const draw=()=>{if(!draw.skip){const ingRows=[...sheet.querySelectorAll('[data-ir]')].map(r=>[r.querySelector('.ia').value,r.querySelector('.im').value]);if(ingRows.length)u.ings=ingRows}draw.skip=0;const sv=sheet.querySelector('#es');if(sv)u.steps=sv.value.split('\n');const nv=sheet.querySelector('#en');if(nv)u.n=nv.value;const gv=sheet.querySelector('#eg');if(gv)u.g=gv.value;
 openSheet(head(d?(E_?'Edit cocktail':'Мой коктейль'):(E_?'New cocktail':'Свой коктейль'),true)+
 lab('Название','Name')+`<input class="din" id="en" maxlength="40" style="width:100%;margin-top:8px" value="${esc(u.n)}" placeholder="${E_?'e.g. Party punch':'Например: Пунш на дачу'}">`+
-lab('Основной алкоголь','Main spirit')+`<div style="margin-top:8px;display:flex;flex-wrap:wrap">${Object.keys(B).map(k=>`<button class="tgl${st.b===k?' on':''}" data-eb="${k}">${esc(bName(k))}</button>`).join('')}</div>`+
-lab('Вкусы (до 3, первый — основной)','Tastes (up to 3, first is main)')+`<div style="margin-top:8px;display:flex;flex-wrap:wrap">${Object.keys(T).map(k=>`<button class="tgl${st.ts.includes(k)?' on':''}" data-et="${k}">${esc(tName(k))}${st.ts[0]===k?' ★':''}</button>`).join('')}</div>`+
+lab('Основной алкоголь','Main spirit')+`<div style="margin-top:8px;display:flex;flex-wrap:wrap">${Object.keys(B).filter(k=>!isN(k)).map(k=>`<button class="tgl${st.b===k?' on':''}" data-eb="${k}">${esc(bName(k))}</button>`).join('')}</div>`+
+lab('Вкусы (до 3, первый — основной)','Tastes (up to 3, first is main)')+`<div style="margin-top:8px;display:flex;flex-wrap:wrap">${Object.keys(T).filter(k=>!isN(k)).map(k=>`<button class="tgl${st.ts.includes(k)?' on':''}" data-et="${k}">${esc(tName(k))}${st.ts[0]===k?' ★':''}</button>`).join('')}</div>`+
 lab('Сложность','Skill')+`<div style="margin-top:8px;display:flex;flex-wrap:wrap">${[1,2,3,4].map(k=>`<button class="tgl${st.l===k?' on':''}" data-el="${k}">${esc(lName(k))}</button>`).join('')}<button class="tgl${st.bt?' on':''}" data-ebt="1">${esc(lName('batch'))}</button></div>`+
 `<div style="font-size:12px;color:#8E8CAE;margin-top:2px">${E_?'“Few” / “Many ingredients” are set automatically.':'«Малосоставные» и «Многосоставные» определятся сами по числу ингредиентов.'}</div>`+
 lab('Бокал','Glass')+`<input class="din" id="eg" maxlength="30" style="width:100%;margin-top:8px" value="${esc(u.g||'')}" placeholder="${E_?'e.g. highball':'Например: хайбол'}">`+
@@ -879,10 +999,30 @@ haptic();build();showCard(d)}};
 draw()}
 
 /* ===================== Список для группового чата ===================== */
-function listText(l){const E_=lang==='en';const s=shopCalc(l);const lines=[`🍸 ${l.name}`,'',E_?'Cocktails:':'Коктейли:'];
-[...l.items.entries()].forEach(([i,k])=>{const d=D[i];lines.push(`• ${nm(d)} — ${k} ${d.g==='кувшин'?t('pitch'):t('serv')}`)});
+function listText(l){const E_=lang==='en';const s=shopCalc(l),sn=shopCalcN(l);const all=[...l.items.entries()].filter(([i])=>!D[i].hidden);const cs=all.filter(([i])=>!D[i].nk),ns=all.filter(([i])=>D[i].nk);const lines=[`🍸 ${l.name}`];
+if(cs.length){lines.push('',E_?'Cocktails:':'Коктейли:');cs.forEach(([i,k])=>{const d=D[i];lines.push(`• ${nm(d)} — ${k} ${d.g==='кувшин'?t('pitch'):t('serv')}`)})}
+if(ns.length){lines.push('',t('nastL'));ns.forEach(([i,k])=>lines.push(`• ${nm(D[i])} — ${k} ${t('bat')} (${t('ready')(D[i].days)})`))}
 lines.push('',E_?'Shopping list:':'Что купить:');[...s.bottles,...s.fruits,...s.other].forEach(r=>lines.push(`• ${ingN(r.name)} — ${r.txt.replace(/<[^>]+>/g,'')}`));
-if(s.ice)lines.push(`• ${t('ice')} — ≈ ${fmtNum(s.ice)} ${t('kg')}`);return lines.join('\n')}
+if(s.ice)lines.push(`• ${t('ice')} — ≈ ${fmtNum(s.ice)} ${t('kg')}`);
+if(sn.nb){if(cs.length)lines.push('',t('secN')+':');sn.rows.forEach(r=>lines.push(`• ${ingN(r.name)} — ${r.txt}`));lines.push(`• ${t('jars')(sn.jars)}`,'',t('startBy')(sn.maxD))}return lines.join('\n')}
+/* ===================== Карта «Настойки»: интерфейс ===================== */
+function nTags(d,c){return`<div style="margin-top:12px"><span class="tg" style="background:${c[0]};color:${c[3]}">${bName(d.b)}</span>${d.ts.map(k=>`<span class="tg">${tName(k)}</span>`).join('')}<span class="tg">${lName(d.l)}</span><span class="tg" style="color:#F2B096">${t('nastTag')}</span></div>
+<div style="font-size:13px;color:#B9B7D6;margin-top:2px"><i class="ti ti-droplet" aria-hidden="true"></i> ≈ ${d.abv} % · ${t('yieldL')} ≈ ${fmtMl(d.y)} · <i class="ti ti-clock" aria-hidden="true"></i> ${t('ready')(d.days)}</div>`}
+/* Покупки для настоек — свои правила: ягоды и фрукты в граммах, сахар и мёд пересчитаны в граммы, плюс банки и срок, когда ставить. */
+const SPOON_G=[[/мёд/i,30,10],[/сахар/i,25,8]];
+function shopCalcN(l){const acc=new Map();let jars=0,maxD=0,nb=0;
+[...l.items.entries()].filter(([i])=>D[i].nk&&!D[i].hidden).forEach(([i,k])=>{const d=D[i];nb+=k;jars+=k*Math.max(1,Math.ceil(d.y/1000));maxD=Math.max(maxD,d.days+3);
+d.ings.forEach(x=>{if(x.a==='Вода')return;const am=x.am.replace(/\s*\(по желанию\)/,'').trim();let q,u,m=am.match(/^(\d+)$/);
+if(m){q=+m[1];u='мл'}else{m=am.match(/^(½|\d+)\s*(.*)$/);if(!m)return;q=m[1]==='½'?.5:+m[1];u=m[2]}
+const sg=SPOON_G.find(r=>r[0].test(x.a));if(sg&&/л\.$/.test(u)){q*=/ст\./.test(u)?sg[1]:sg[2];u='г'}
+const key=canon(x.a)+'|'+u;const o=acc.get(key)||{name:canon(x.a),u,n:0};o.n+=q*k;acc.set(key,o)})});
+const rows=[...acc.values()].map(o=>{let txt;if(o.u==='мл')txt=fmtMl(o.n);else if(o.u==='г')txt=o.n>=1000?fmtNum(Math.round(o.n/100)/10)+' '+t('kg'):Math.round(o.n)+' '+t('g');else if(o.u==='шт')txt=fmtNum(Math.ceil(o.n*2)/2)+' '+t('pcs');
+else if(/палоч/.test(o.u))txt=Math.ceil(o.n)+' '+t('sticks');else if(/бутон/.test(o.u))txt=Math.ceil(o.n)+' '+t('cloves');else if(/звёзд/.test(o.u))txt=Math.ceil(o.n)+' '+t('stars');else txt=fmtNum(Math.round(o.n*10)/10)+' '+amtL(o.u);return{name:o.name,txt,c:catOf(o.name)}});
+rows.sort((a,b)=>(a.c?1:0)-(b.c?1:0)||ingN(a.name).localeCompare(ingN(b.name),lang));return{rows,jars,maxD,nb}}
+/* Переключение карт — только на общем уровне; в открытой группе верхний переключатель листает группы. */
+function switchWorld(w){if(w===world||WT)return;if(inGroup)exitGroup();if(cardOpen)closeSheet();WT={t0:performance.now(),dir:w==='n'?1:-1,w,bx0:bgx,sw:0};haptic('sel');document.querySelectorAll('.wsb').forEach(b=>b.classList.toggle('on',b.dataset.w===w))}
+function applyWorld(){SF.b.clear();SF.t.clear();SF.l.clear();applyStatic();lastHdr='';updCount();document.getElementById('cv').setAttribute('aria-label',world==='n'?(lang==='en'?'Infusion map':'Карта настоек: звёздное небо групп настоек'):(lang==='en'?'Cocktail map':'Коктейльная карта: звёздное небо групп коктейлей'))}
+document.querySelectorAll('.wsb').forEach(b=>b.onclick=()=>switchWorld(b.dataset.w));
 /* ===== Сохранение: у каждого пользователя свои данные =====
    В Telegram — CloudStorage (привязано к аккаунту и боту, синхронизируется между устройствами).
    В обычном браузере — localStorage. Коктейли сохраняются по названию, чтобы порядок базы можно было менять. */
@@ -901,7 +1041,7 @@ for(let j=parts.length;j<(prevLen[k]||0);j++)await cs.set(k+'_p'+j,'');prevLen[k
 for(let j=0;j<(prevLen[k]||0);j++)await cs.set(k+'_p'+j,'');prevLen[k]=0}
 function snap(){return{
 wtd_custom:JSON.stringify(USER),
-wtd_prefs:JSON.stringify({lang,age:ageOk?1:0,F}),
+wtd_prefs:JSON.stringify({lang,age:ageOk?1:0,F,world}),
 wtd_fav:JSON.stringify([...fav].map(i=>D[i].n)),
 wtd_bar:JSON.stringify([...bar]),
 wtd_lists:JSON.stringify(lists.map(l=>({id:l.id,name:l.name,def:l.def,items:[...l.items.entries()].map(([i,k])=>[D[i].n,k])}))),
@@ -914,7 +1054,7 @@ window.addEventListener('pagehide',saveNow);
 const pj=(s,d)=>{try{return s?JSON.parse(s):d}catch(e){return d}};
 async function loadAll(){const v={};for(const k of KEYS)v[k]=await readKey(k);
 pj(v.wtd_custom,[]).forEach(u=>{try{if(u&&u.n&&!BYNAME.has(u.n)&&Array.isArray(u.ings)){USER.push(u);userToD(u)}}catch(e){}});
-const p=pj(v.wtd_prefs,{});if(p.lang==='ru'||p.lang==='en')lang=p.lang;if(p.F)Object.keys(F).forEach(k=>{F[k]=!!p.F[k]});
+const p=pj(v.wtd_prefs,{});if(p.lang==='ru'||p.lang==='en')lang=p.lang;if(p.F)Object.keys(F).forEach(k=>{F[k]=!!p.F[k]});if(p.world==='n'){world='n';skyK=1}
 pj(v.wtd_fav,[]).forEach(n=>{const d=BYNAME.get(n);if(d)fav.add(d.i)});
 pj(v.wtd_bar,[]).forEach(n=>bar.add(n));
 lists=pj(v.wtd_lists,[]).map(l=>({id:+l.id||0,name:String(l.name||'').slice(0,40)||'—',def:clamp(+l.def||4,1,99),shop:false,items:new Map((l.items||[]).map(([n,k])=>[BYNAME.get(n),clamp(+k||1,1,99)]).filter(([d])=>d).map(([d,k])=>[d.i,k]))}));
@@ -929,6 +1069,6 @@ function sameItems(a,b){if(a.size!==b.size)return false;for(const[k,v]of a)if(b.
 function afterAge(){if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;
 if(!lists.some(l=>sameItems(l.items,items))){const vals=[...items.values()];lists.push({id:lid++,name:t('sharedList'),items,shop:false,def:vals.every(v=>v===vals[0])?vals[0]:4})}
 updCount();showLists()}
-loadAll().then(age=>{applyStatic();if(USER.length)build();hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;PL.forEach(q=>q._lk=null);updCount();if(age||ageOk||lsAge())hideAge();else document.getElementById('age').style.display='flex'}).catch(()=>{loaded=true;if(!lsAge())document.getElementById('age').style.display='flex'});
+loadAll().then(age=>{applyStatic();if(USER.length||world==='n'){build();applyWorld()}hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;PL.forEach(q=>q._lk=null);updCount();if(age||ageOk||lsAge())hideAge();else document.getElementById('age').style.display='flex'}).catch(()=>{loaded=true;if(!lsAge())document.getElementById('age').style.display='flex'});
 </script>
 </body></html>
