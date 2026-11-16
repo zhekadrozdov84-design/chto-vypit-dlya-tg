@@ -919,11 +919,11 @@ bindSup();sheet.querySelector('#addl').onclick=()=>showAdd(d);const ec=sheet.que
 let cookT=null;
 function showCook(d,step){if(step===0)track('cook_start',{item:d.n});if(cookT){clearInterval(cookT);cookT=null}const stp=steps(d);const total=stp.length+1;
 let body;if(step===0){body=`<div style="font-size:15px;color:#B9B7D6;margin-bottom:6px">${t('prep')}</div>${d.ings.map((x,i)=>`<div class="row" data-ck="${i}" style="font-size:19px"><i class="ti ti-circle" style="font-size:24px;color:#6F6D8E" aria-hidden="true"></i><span style="flex:1">${ingN(x.a)}</span><span style="color:#EAD3A6;font-size:18px;white-space:nowrap">${amtL(x.am)}</span></div>`).join('')}${d.g?`<div style="margin-top:12px;font-size:15px;color:#B9B7D6">${t('glass')}${glN(d.g)}</div>`:''}`}
-else{const s=stp[step-1];body=`<div style="font-size:23px;line-height:1.5;color:#F3F1FF;padding:18px 0">${s}</div>${!d.nk&&/встряхив|shake/i.test(s)?`<button class="sec" id="tmr" style="width:100%;height:52px;font-size:16px"><i class="ti ti-clock" aria-hidden="true"></i>${t('timer')}</button>`:''}`}
+else{const s=stp[step-1];body=`<div style="font-size:23px;line-height:1.5;color:#F3F1FF;padding:18px 0">${s}</div>${!d.nk&&/встряхив|shake/i.test(s)?`<button class="sec" id="tmr" style="width:100%;height:52px;font-size:16px"><i class="ti ti-clock" aria-hidden="true"></i>${t('timer')}</button>`:''}${d.nk&&d.days&&/настаива|infuse/i.test(s)?remBox(d):''}`}
 openSheet(head(nm(d),true)+`<div style="font-size:12px;color:#8E8CAE;margin-top:6px">${t('bm')} ${step+1} ${t('of')} ${total}</div><div style="height:3px;border-radius:2px;background:rgba(220,225,255,.1);margin-top:8px"><div style="height:3px;border-radius:2px;background:#EAD3A6;width:${(step+1)/total*100}%"></div></div><div style="margin-top:12px;min-height:300px">${body}</div><div style="display:flex;gap:8px;margin-top:16px">${step>0?`<button class="sec" id="pv" style="height:52px;flex:none;width:110px">${t('back')}</button>`:''}<button class="big" id="nx" style="height:52px">${step+1<total?t('next'):t('done')}</button></div>`,true);
 sheet.querySelector('#back').onclick=()=>showCard(d);if(step>0)sheet.querySelector('#pv').onclick=()=>showCook(d,step-1);sheet.querySelector('#nx').onclick=()=>{haptic();step+1<total?showCook(d,step+1):(supCook(),showCard(d))};
 sheet.querySelectorAll('[data-ck]').forEach(r=>r.onclick=()=>{const i=r.querySelector('i');const on=i.classList.contains('ti-circle');i.className='ti '+(on?'ti-circle-check':'ti-circle');i.style.color=on?'#EAD3A6':'#6F6D8E';r.style.opacity=on?.55:1;haptic()});
-const tm=sheet.querySelector('#tmr');if(tm)tm.onclick=()=>{if(cookT)return;let s=15;beep(660,.12,.25);tm.textContent=t('shaking')+15;cookT=setInterval(()=>{s--;if(s<=0){clearInterval(cookT);cookT=null;tm.textContent=t('shaken');haptic();beep(880,.18,.35);setTimeout(()=>beep(1175,.28,.35),220)}else{tm.textContent=t('shaking')+s;beep(s<=3?990:520,.05,s<=3?.22:.12)}},1000)}}
+if(d.nk)bindRem(d,()=>showCook(d,step));const tm=sheet.querySelector('#tmr');if(tm)tm.onclick=()=>{if(cookT)return;let s=15;beep(660,.12,.25);tm.textContent=t('shaking')+15;cookT=setInterval(()=>{s--;if(s<=0){clearInterval(cookT);cookT=null;tm.textContent=t('shaken');haptic();beep(880,.18,.35);setTimeout(()=>beep(1175,.28,.35),220)}else{tm.textContent=t('shaking')+s;beep(s<=3?990:520,.05,s<=3?.22:.12)}},1000)}}
 /* Звук таймера: короткие тики каждую секунду, последние три — выше, в конце двойной сигнал. Web Audio, без файлов. */
 let AC=null;function beep(f,dur,vol){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,AC.currentTime);g.gain.linearRampToValueAtTime(vol,AC.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+dur);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+dur+.02)}catch(e){}}
 function newListForm(id){return`<div style="display:flex;gap:8px;margin-top:10px"><input class="din" id="${id}" placeholder="${t('listPh')}" maxlength="40"><button class="sec" id="${id}b"><i class="ti ti-plus" aria-hidden="true"></i>${t('create')}</button></div><div id="${id}e" style="font-size:13px;color:#FF8A95;margin-top:6px"></div>`}
@@ -1286,14 +1286,16 @@ Object.assign(ICONS,{'help-circle':'<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 
 'message-circle':'<path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/>',
 share:'<path d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M15 6a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M15 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.7 10.7l6.6 -3.4"/><path d="M8.7 13.3l6.6 3.4"/>',
 lock:'<path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/>'});
-const APP_VER='1.0',APP_DATE='16.11.2026',APP_LINK='https://t.me/whattodrinkuh_bot/app';
+const APP_VER='1.1',APP_DATE='16.11.2026',APP_LINK='https://t.me/whattodrinkuh_bot/app';
 const HOWTO=[['Крутите шар пальцем. Тап по группе открывает её, щипок или двойной тап — назад.','Spin the globe with a finger. Tap a group to open it; pinch or double-tap to go back.'],
 ['«Основа», «Вкус» и «Сложность» раскладывают карту по-разному. Сверху — переключатель «Коктейли / Настойки».','“Base”, “Taste” and “Difficulty” arrange the map in different ways. The switch at the top flips between cocktails and infusions.'],
 ['Тап по звезде открывает рецепт. «Готовить» — пошаговый режим бармена с таймером.','Tap a star to open the recipe. “Make it” starts the step-by-step bartender mode with a timer.'],
 ['Карточку и любую панель закрывайте свайпом вниз за полоску сверху.','Close a card or any panel by swiping down on the handle at the top.'],
 ['Собирайте меню вечеринки «В список»: там же «Что купить» и «Поделиться». Лишнюю позицию смахните влево.','Build a party menu with “Add to list”: it has “Shopping” and “Share”. Swipe a row left to remove it.'],
 ['«Поиск и фильтры» — поиск, случайный рецепт и «Мой бар»: отметьте, что есть дома, и карта подсветит, что можно сделать.','“Search & filters” has search, a random pick and “My bar”: tick what you have and the map lights up what you can make.'],
-['«+» внизу — свои рецепты коктейлей и настоек.','“+” at the bottom adds your own cocktails and infusions.']];
+['«+» внизу — свои рецепты коктейлей и настоек.','“+” at the bottom adds your own cocktails and infusions.'],
+['В списке — «Сделать общим»: друзья по ссылке добавляют коктейли сами. «Голосование» — бот создаст опрос в чате компании.','In a list, “Make shared” lets friends add drinks via a link. “Poll in a chat” makes the bot post a poll in your group.'],
+['Ставите настойку — на шаге настаивания включите «Напомнить», и бот напишет, когда пора процеживать. В чате с ботом есть кнопки: случайный коктейль, поиск, напоминания; а в любом чате наберите @whattodrinkuh_bot и название коктейля.','Starting an infusion? Turn on “Remind me” at the infusing step and the bot will message you when to strain it. The bot chat has buttons for a random drink, search and reminders; in any chat type @whattodrinkuh_bot and a drink name.']];
 function showAbout(){navMark(showAbout);const E_=lang==='en';const L=(r,e)=>E_?e:r;
 openSheet(head(L('О приложении','About'))+`<div style="font-size:15px;line-height:1.6;color:#C9C7E2;margin-top:8px">${L('Звёздная карта коктейлей и настоек для домашней вечеринки: списки, покупки и пошаговый режим бармена.','A star map of cocktails and infusions for a home party: lists, shopping and step-by-step bartender mode.')}</div>
 <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">
@@ -1313,6 +1315,72 @@ sheet.querySelector('#abs').onclick=()=>{track('app_share');const txt=L('Что 
 const d_=sheet.querySelector('#abd');if(d_)d_.onclick=supGo;sheet.querySelector('#abt').onclick=showTerms;sheet.querySelector('#abp').onclick=()=>op('https://zhekadrozdov84-design.github.io/chto-vypit-dlya-tg/privacy.html')}
 document.getElementById('inf').onclick=showAbout;
 try{if(tg&&tg.SettingsButton){tg.SettingsButton.show();tg.SettingsButton.onClick(showAbout)}}catch(_){}
+/* ===== Связь с сервером бота (Cloudflare Worker whattodrinkuh-stars) =====
+   Напоминания по настойкам, общие списки, голосования в чатах, открытие по ссылкам из бота.
+   Запросы подписаны initData Telegram; вне Telegram эти функции недоступны. */
+const API='https://whattodrinkuh-stars.zhekadrozdov84.workers.dev';
+let REM={};/* {название настойки: {key, at}} — сохраняется в wtd_prefs */
+const inTg=()=>!!(tg&&tg.initData);
+async function apiPost(path,body){const r=await fetch(API+path,{method:'POST',headers:{'content-type':'text/plain'},body:JSON.stringify(Object.assign({initData:tg?tg.initData:''},body||{}))});let j=null;try{j=await r.json()}catch(_){}if(!r.ok){const e=new Error((j&&j.error)||('HTTP '+r.status));e.status=r.status;throw e}return j}
+const onlyTg=()=>{showToast(lang==='en'?'Works inside Telegram only':'Работает только внутри Telegram');return false};
+const netErr=()=>showToast(lang==='en'?'No connection to the server — try again later':'Нет связи с сервером — попробуйте позже');
+const fmtDay=t=>new Date(t).toLocaleDateString(lang==='en'?'en-GB':'ru-RU',{day:'numeric',month:'long'});
+
+/* ---------- напоминания: блок на шаге настаивания в режиме бармена ---------- */
+function remBox(d){const r=REM[d.n];const E_=lang==='en';
+if(r&&r.at>Date.now())return`<div id="remb" style="margin-top:6px;padding:12px 14px;border-radius:14px;background:rgba(234,211,166,.08);border:0.5px solid rgba(234,211,166,.3);display:flex;align-items:center;gap:10px"><span style="flex:1;font-size:15px;color:#EAD3A6">🔔 ${E_?'I’ll remind you on':'Напомню'} ${fmtDay(r.at)}</span><button class="sec" id="remoff" style="height:38px;padding:0 12px">${E_?'Turn off':'Отключить'}</button></div>`;
+return`<button class="sec" id="remon" style="width:100%;height:52px;font-size:16px;margin-top:6px">🔔 ${E_?`Remind me to strain in ${d.days} days`:`Напомнить процедить через ${dPl(d.days)}`}</button><div style="font-size:12px;color:#8E8CAE;margin-top:6px;line-height:1.45">${E_?'The bot will message you in Telegram. You can turn it off any time.':'Бот напишет вам в Telegram, когда пора. Можно отключить в любой момент.'}</div>`}
+function bindRem(d,rerender){const on=sheet.querySelector('#remon'),off=sheet.querySelector('#remoff');
+if(on)on.onclick=()=>{if(!inTg())return onlyTg();const go=()=>{on.disabled=true;apiPost('/api/remind',{i:d.i,n:d.n,days:d.days}).then(r=>{REM[d.n]={key:r.key,at:r.at};track('remind_on',{item:d.n});haptic();rerender()}).catch(()=>{on.disabled=false;netErr()})};
+try{if(tg.requestWriteAccess)tg.requestWriteAccess(ok=>{if(ok)go();else showToast(lang==='en'?'Allow the bot to message you to get reminders':'Разрешите боту писать вам — иначе напоминание не придёт')});else go()}catch(_){go()}};
+if(off)off.onclick=()=>{const r=REM[d.n];delete REM[d.n];track('remind_off',{item:d.n});rerender();if(r&&inTg())apiPost('/api/remind/cancel',{key:r.key}).catch(()=>{})}}
+
+/* ---------- общие списки ---------- */
+const plainItems=l=>{const o={};l.items.forEach((k,i)=>{if(D[i]&&D[i].src!=='user')o[i]=k});return o};
+function applySrv(l,L){l.items=new Map(Object.entries(L.items).map(([i,k])=>[+i,k]).filter(([i])=>D[i]));l._srv=Object.assign({},L.items);l.def=L.def;l.name=L.name;l.rev=L.rev}
+let syncBusy=false,lastPull=0;
+async function syncLists(force){if(syncBusy||!inTg())return;const sh=lists.filter(l=>l.sid);if(!sh.length)return;syncBusy=true;let changed=false;
+for(const l of sh){try{const cur=plainItems(l);
+  if(!l._srv){const r=await apiPost('/api/list/'+l.sid,{});applySrv(l,r.list);l._def=l.def;changed=true;continue}
+  const set={},del=[];for(const[i,k]of Object.entries(cur))if(l._srv[i]!==k)set[i]=k;for(const i of Object.keys(l._srv))if(!(i in cur))del.push(+i);
+  const defCh=l._def!==undefined&&l._def!==l.def;
+  if(Object.keys(set).length||del.length||defCh){const before=l.rev;const r=await apiPost('/api/list/'+l.sid+'/sync',{set,del,def:l.def,name:l.name});applySrv(l,r.list);l._def=l.def;if(r.list.rev!==before+1)changed=true}
+  else if(force){const r=await apiPost('/api/list/'+l.sid,{});if(r.list.rev!==l.rev){applySrv(l,r.list);l._def=l.def;changed=true}}}
+ catch(e){if(e.status===404){l.sid=null;delete l._srv;changed=true;showToast(lang==='en'?'The shared list expired — kept as your own list':'Общий список удалён с сервера — остался у вас как обычный')}}}
+syncBusy=false;
+if(changed){updCount();if(curView===showLists&&!document.querySelector('.swf[style*="translateX"]')){const y=sheet.scrollTop;showLists();sheet.scrollTop=y}}}
+setInterval(()=>{const pull=curView===showLists&&Date.now()-lastPull>12000;if(pull)lastPull=Date.now();lists.forEach(l=>{if(l.sid&&l._def===undefined)l._def=l.def});syncLists(pull)},2500);
+async function makeShared(l){if(!inTg())return onlyTg();try{const r=await apiPost('/api/list/create',{name:l.name,def:l.def,items:plainItems(l)});l.sid=r.id;applySrv(l,r.list);l._def=l.def;track('list_shared',{items:l.items.size});inviteList(l);const y=sheet.scrollTop;showLists();sheet.scrollTop=y}catch(_){netErr()}}
+function inviteList(l){const link=BOT_URL+'?startapp=l_'+l.sid;const txt=(lang==='en'?'Join our party list «':'Присоединяйтесь к списку на вечеринку «')+l.name+(lang==='en'?'» — add what you want to drink 🍸':'» — добавляйте, что хотите выпить 🍸');const u='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(txt);try{if(tg&&tg.openTelegramLink){tg.openTelegramLink(u);return}}catch(_){}window.open(u,'_blank','noopener')}
+async function joinList(sid){if(!inTg())return;const ex=lists.find(l=>l.sid===sid);if(ex){showLists();syncLists(true);return}
+try{const r=await apiPost('/api/list/'+sid,{});const l={id:lid++,name:r.list.name,items:new Map(),shop:false,def:r.list.def,sid};applySrv(l,r.list);l._def=l.def;lists.push(l);track('list_join',{});updCount();showLists();showToast(lang==='en'?'You joined the shared list':'Вы в общем списке — правки видят все')}
+catch(e){showToast(e.status===404?(lang==='en'?'This shared list no longer exists':'Этот общий список уже удалён'):(lang==='en'?'No connection to the server':'Нет связи с сервером'))}}
+
+/* ---------- голосование в чате ---------- */
+async function pollList(l){if(!inTg())return onlyTg();const opts=[...l.items.keys()].filter(i=>D[i]&&D[i].src!=='user').map(i=>D[i].n);
+if(opts.length<2)return showToast(lang==='en'?'Add at least 2 drinks to the list':'Добавьте в список хотя бы 2 коктейля');
+try{const r=await apiPost('/api/poll',{title:'Что пьём? — '+l.name,options:opts.slice(0,12)});track('poll_create',{n:opts.length});
+if(opts.length>12)showToast(lang==='en'?'Only the first 12 go into the poll':'В опрос попадут первые 12');
+setTimeout(()=>{try{tg.openTelegramLink(r.link)}catch(_){window.open(r.link,'_blank')}},opts.length>12?900:0)}catch(_){netErr()}}
+
+/* Кнопки «общий список» и «голосование» под каждым списком — дорисовываем к showLists. */
+const _showLists=showLists;
+showLists=function(){_showLists();const E_=lang==='en';
+lists.forEach(l=>{const del=sheet.querySelector(`[data-del="${l.id}"]`);if(!del)return;const card=del.closest('div[style*="border-radius:16px"]');if(!card)return;
+ if(l.sid){const b=document.createElement('span');b.style.cssText='font-size:11px;color:#C8F27A;border:0.5px solid rgba(200,242,122,.4);border-radius:8px;padding:2px 6px';b.textContent=E_?'shared':'общий';del.parentNode.insertBefore(b,del.previousElementSibling)}
+ const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;margin-top:8px';
+ row.innerHTML=`<button class="sec" data-shr="${l.id}" style="flex:1">${l.sid?'🔗 '+(E_?'Invite':'Пригласить'):'👥 '+(E_?'Make shared':'Сделать общим')}</button><button class="sec" data-poll="${l.id}" style="flex:1">🗳 ${E_?'Poll in a chat':'Голосование'}</button>`;
+ card.appendChild(row);
+ row.querySelector('[data-shr]').onclick=()=>l.sid?inviteList(l):makeShared(l);row.querySelector('[data-poll]').onclick=()=>pollList(l)});
+if(lists.some(l=>l.sid))syncLists(true)};
+
+/* ---------- открытие по ссылкам из бота: c_<номер> карточка, l_<id> общий список, lists, n ---------- */
+let startDone=false;
+function startExtra(){if(startDone)return;startDone=true;const s=startParam();if(!s)return;
+if(/^c_[0-9a-z]+$/.test(s)){const d=D[parseInt(s.slice(2),36)];if(d){if(d.nk&&world!=='n'&&typeof switchWorld==='function')switchWorld('n');setTimeout(()=>showCard(d),d.nk?1100:0)}}
+else if(/^l_[a-z0-9]{8}$/.test(s))joinList(s.slice(2));
+else if(s==='lists')showLists();
+else if(s==='n'&&world!=='n'&&typeof switchWorld==='function')switchWorld('n')}
 /* ===== Сохранение: у каждого пользователя свои данные =====
    В Telegram — CloudStorage (привязано к аккаунту и боту, синхронизируется между устройствами).
    В обычном браузере — localStorage. Коктейли сохраняются по названию, чтобы порядок базы можно было менять. */
@@ -1336,10 +1404,10 @@ for(let j=parts.length;j<(prevLen[k]||0);j++)await cs.set(k+'_p'+j,'');prevLen[k
 for(let j=0;j<(prevLen[k]||0);j++)await cs.set(k+'_p'+j,'');prevLen[k]=0}
 function snap(){return{
 wtd_custom:JSON.stringify(USER),
-wtd_prefs:JSON.stringify({lang,age:ageOk?1:0,F,world,sup:SUP}),
+wtd_prefs:JSON.stringify({lang,age:ageOk?1:0,F,world,sup:SUP,rem:REM}),
 wtd_fav:JSON.stringify([...fav].map(i=>D[i].n)),
 wtd_bar:JSON.stringify([...bar]),
-wtd_lists:JSON.stringify(lists.map(l=>({id:l.id,name:l.name,def:l.def,items:[...l.items.entries()].map(([i,k])=>[D[i].n,k])}))),
+wtd_lists:JSON.stringify(lists.map(l=>({id:l.id,name:l.name,def:l.def,sid:l.sid||undefined,items:[...l.items.entries()].map(([i,k])=>[D[i].n,k])}))),
 wtd_notes:JSON.stringify(Object.fromEntries(Object.entries(notes).filter(([,v])=>v).map(([i,v])=>[D[i].n,v])))}}
 let saved={},loaded=false,saving=false;
 async function saveNow(){if(!loaded||saving)return;saving=true;try{const s=snap();for(const k of KEYS){if(s[k]!==saved[k]){await writeKey(k,s[k]);saved[k]=s[k]}}}finally{saving=false}}
@@ -1349,10 +1417,10 @@ window.addEventListener('pagehide',saveNow);
 const pj=(s,d)=>{try{return s?JSON.parse(s):d}catch(e){return d}};
 async function loadAll(){const v={};for(const k of KEYS)v[k]=await readKey(k);
 pj(v.wtd_custom,[]).forEach(u=>{try{if(u&&u.n&&!BYNAME.has(u.n)&&Array.isArray(u.ings)){USER.push(u);u.k==='n'?userToDN(u):userToD(u)}}catch(e){}});
-const p=pj(v.wtd_prefs,{});if(p.lang==='ru'||p.lang==='en')lang=p.lang;if(p.F)Object.keys(F).forEach(k=>{F[k]=!!p.F[k]});if(p.world==='n'){world='n';skyK=1}if(p.sup&&typeof p.sup==='object')Object.assign(SUP,p.sup);
+const p=pj(v.wtd_prefs,{});if(p.lang==='ru'||p.lang==='en')lang=p.lang;if(p.F)Object.keys(F).forEach(k=>{F[k]=!!p.F[k]});if(p.world==='n'){world='n';skyK=1}if(p.sup&&typeof p.sup==='object')Object.assign(SUP,p.sup);if(p.rem&&typeof p.rem==='object')Object.entries(p.rem).forEach(([k,v])=>{if(v&&v.at>Date.now())REM[k]=v});
 pj(v.wtd_fav,[]).forEach(n=>{const d=BYNAME.get(n);if(d)fav.add(d.i)});
 pj(v.wtd_bar,[]).forEach(n=>bar.add(barRN(n)));
-lists=pj(v.wtd_lists,[]).map(l=>({id:+l.id||0,name:String(l.name||'').slice(0,40)||'—',def:clamp(+l.def||4,1,99),shop:false,items:new Map((l.items||[]).map(([n,k])=>[BYNAME.get(n),clamp(+k||1,1,99)]).filter(([d])=>d).map(([d,k])=>[d.i,k]))}));
+lists=pj(v.wtd_lists,[]).map(l=>({sid:/^[a-z0-9]{8}$/.test(l.sid||'')?l.sid:null,id:+l.id||0,name:String(l.name||'').slice(0,40)||'—',def:clamp(+l.def||4,1,99),shop:false,items:new Map((l.items||[]).map(([n,k])=>[BYNAME.get(n),clamp(+k||1,1,99)]).filter(([d])=>d).map(([d,k])=>[d.i,k]))}));
 lid=Math.max(0,...lists.map(l=>l.id))+1;
 Object.entries(pj(v.wtd_notes,{})).forEach(([n,txt])=>{const d=BYNAME.get(n);if(d&&txt)notes[d.i]=String(txt)});
 saved=snap();KEYS.forEach(k=>{if((v[k]||'')==='')saved[k]=''});loaded=true;return !!p.age}
@@ -1361,7 +1429,7 @@ function startParam(){let s='';try{s=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.s
 function lsAge(){try{return localStorage.getItem('wtd_age')==='1'}catch(e){return false}}
 let pendingMenu=null;(()=>{const s=startParam();if(!/^m_[0-9a-z]+x\d+(-[0-9a-z]+x\d+)*$/.test(s))return;const items=new Map();s.slice(2).split('-').forEach(p=>{const[a,b]=p.split('x');const i=parseInt(a,36);if(D[i])items.set(i,clamp(+b||1,1,99))});if(items.size)pendingMenu=items})();
 function sameItems(a,b){if(a.size!==b.size)return false;for(const[k,v]of a)if(b.get(k)!==v)return false;return true}
-function afterAge(){if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;track('menu_import',{items:items.size});
+function afterAge(){if(loaded)startExtra();if(!pendingMenu||!loaded)return;const items=pendingMenu;pendingMenu=null;track('menu_import',{items:items.size});
 if(!lists.some(l=>sameItems(l.items,items))){const vals=[...items.values()];lists.push({id:lid++,name:t('sharedList'),items,shop:false,def:vals.every(v=>v===vals[0])?vals[0]:4})}
 updCount();showLists()}
 loadAll().then(age=>{applyStatic();supDay();supFooter();if(USER.length||world==='n'){build();applyWorld()}hubs.forEach(h=>{h.n=glabel(h.k);h._k=null});lastHdr='';fontsOk++;PL.forEach(q=>q._lk=null);updCount();if(age||ageOk||lsAge())hideAge();else document.getElementById('age').style.display='flex'}).catch(()=>{loaded=true;if(!lsAge())document.getElementById('age').style.display='flex'});

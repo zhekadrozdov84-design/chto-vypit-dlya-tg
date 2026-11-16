@@ -7,6 +7,6 @@
   "workers_dev": true,
   "keep_vars": true,
   "kv_namespaces": [{ "binding": "KV", "id": "8e962b1b410e4c42b63b630f8e17ceea" }],
-  "triggers": { "crons": ["7 * * * *"] },
+  "triggers": { "crons": ["*/30 * * * *"] },
   "observability": { "enabled": true }
 }

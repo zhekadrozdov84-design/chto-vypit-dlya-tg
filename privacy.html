@@ -3,32 +3,56 @@
 <style>body{margin:0;background:#0B1020;color:#DCDAF0;font:16px/1.6 -apple-system,Segoe UI,Roboto,sans-serif}main{max-width:680px;margin:0 auto;padding:32px 20px 48px}h1{font-size:26px;color:#F3F1FF;margin:0 0 4px}h2{font-size:18px;color:#EAD3A6;margin:28px 0 6px}p,li{color:#C9C7E2}a{color:#EAD3A6}.muted{color:#8E8CAE;font-size:14px}hr{border:none;border-top:1px solid rgba(220,225,255,.12);margin:36px 0}</style></head>
 <body><main>
 <h1>Политика конфиденциальности</h1>
-<p class="muted">Мини-приложение «Что пьём?» (бот @whattodrinkuh_bot). Редакция от 13 ноября 2026 года.</p>
+<p class="muted">Мини-приложение и бот «Что пьём?» (@whattodrinkuh_bot). Редакция от 16 ноября 2026 года.</p>
 
-<h2>Что сохраняется</h2>
-<p>Ваши избранные, списки, «Мой бар», заметки, свои рецепты и настройки (язык, фильтры, выбранная карта) хранятся в облачном хранилище Telegram, привязанном к вашему аккаунту и этому боту. Вне Telegram — в памяти вашего браузера. У приложения нет своего сервера, и эти данные никуда больше не передаются.</p>
+<h2>Коротко</h2>
+<p>Мы стараемся знать о вас как можно меньше. Ваши списки и рецепты лежат в облаке Telegram, статистика обезличена, а на нашем сервере хранится только то, без чего не работают напоминания, общие списки и голосования, — и только пока это нужно.</p>
+
+<h2>Что хранится в Telegram</h2>
+<p>Избранное, списки, «Мой бар», заметки, свои рецепты и настройки (язык, фильтры, выбранная карта) хранятся в облачном хранилище Telegram, привязанном к вашему аккаунту и этому боту. Вне Telegram — в памяти вашего браузера. Мы эти данные не видим.</p>
+
+<h2>Что хранится на сервере бота</h2>
+<p>У бота есть небольшой сервер (Cloudflare Workers). Он хранит данные только для функций, которые вы включаете сами:</p>
+<ul>
+<li><b>Напоминания по настойкам</b> — ваш Telegram ID, название настойки и дата напоминания. Удаляются сразу после отправки напоминания или когда вы его отключаете.</li>
+<li><b>Общие списки</b> — название списка, коктейли и число порций, Telegram ID создателя. Удаляются автоматически через 90 дней без изменений.</li>
+<li><b>Голосования</b> — название и варианты опроса до момента его создания в чате; удаляются через 7 дней.</li>
+</ul>
+<p>Сообщения боту, поисковые запросы и платежи сервер обрабатывает, чтобы ответить, но не сохраняет.</p>
+
+<h2>Оплата звёздами</h2>
+<p>Кнопка «Автору на лёд и лаймы» — добровольный подарок, взамен ничего не открывается. Оплату звёздами проводит Telegram по своим правилам; мы получаем только сумму и не храним её. Перевод рублями открывается на сервисе tips.tips и проходит по его правилам.</p>
 
 <h2>Статистика использования</h2>
-<p>Чтобы понимать, чем пользуются и что улучшать, приложение собирает обезличенную статистику через сервис Яндекс Метрика: открытия приложения, переходы между картами и режимами, открытые карточки рецептов, создание списков и рецептов, использование поиска, фильтров и кнопки «Поделиться», а также тип устройства и платформу Telegram.</p>
+<p>Чтобы понимать, чем пользуются и что улучшать, приложение собирает обезличенную статистику через Яндекс Метрику: открытия приложения, переходы между картами и режимами, открытые карточки, создание списков и рецептов, использование поиска, фильтров, напоминаний и кнопок «Поделиться», тип устройства и платформу Telegram.</p>
 <ul>
-<li>Вместо вашего Telegram-идентификатора передаётся его необратимый хэш — по нему нельзя узнать, кто вы.</li>
+<li>Вместо Telegram ID передаётся его необратимый хэш — по нему нельзя узнать, кто вы.</li>
 <li>Имя, ник, номер телефона, сообщения, содержимое списков и заметок не передаются.</li>
-<li>Яндекс Метрика может использовать cookies и сведения о браузере и устройстве по своим правилам: <a href="https://yandex.ru/legal/metrica_termsofuse/" target="_blank" rel="noopener">условия использования Яндекс Метрики</a>.</li>
+<li>Яндекс Метрика может использовать cookies и сведения о браузере и устройстве по своим правилам: <a href="https://yandex.ru/legal/metrica_termsofuse/">условия использования Яндекс Метрики</a>.</li>
 </ul>
 
 <h2>Ссылки «Поделиться»</h2>
-<p>Ссылка на меню содержит только номера коктейлей и число порций. Свои рецепты в ссылку не попадают.</p>
+<p>Ссылка на меню содержит только номера коктейлей и число порций; свои рецепты в неё не попадают. Ссылка на общий список даёт любому, у кого она есть, возможность смотреть и менять этот список.</p>
+
+<h2>Как удалить данные</h2>
+<ul>
+<li>Списки, рецепты и заметки — удалите их в приложении или удалите чат с ботом.</li>
+<li>Напоминания — отключите в приложении или в боте («⏰ Мои напоминания»).</li>
+<li>Общий список удалится сам через 90 дней без изменений; если нужно раньше — напишите нам.</li>
+</ul>
 
 <h2>Возраст</h2>
 <p>Приложение предназначено для лиц старше 18 лет.</p>
 
 <h2>Связь</h2>
-<p>Вопросы и просьбы об удалении данных — через Instagram <a href="https://www.instagram.com/ne.drozd/" target="_blank" rel="noopener">@ne.drozd</a>. Данные в облачном хранилище Telegram удаляются вместе с удалением чата с ботом или вручную в приложении (удалите списки, рецепты и заметки).</p>
+<p>Вопросы о данных и просьбы об удалении — в Instagram <a href="https://www.instagram.com/ne.drozd/">@ne.drozd</a>.</p>
 
 <hr>
 <h1>Privacy policy</h1>
-<p class="muted">“What are we drinking?” mini app (@whattodrinkuh_bot). Version of 13 November 2026.</p>
-<p>Your favourites, lists, bar, notes, own recipes and settings are stored in Telegram Cloud Storage tied to your account and this bot (outside Telegram — in your browser). The app has no server of its own.</p>
-<p>To improve the app, anonymous usage statistics are collected with Yandex Metrica: app opens, map and mode switches, opened recipe cards, created lists and recipes, use of search, filters and sharing, device and Telegram platform. An irreversible hash is sent instead of your Telegram ID; names, usernames, phone numbers, messages and list contents are never sent. Yandex Metrica may use cookies under its own terms.</p>
-<p>The app is intended for adults (18+). Contact: Instagram <a href="https://www.instagram.com/ne.drozd/" target="_blank" rel="noopener">@ne.drozd</a>.</p>
+<p class="muted">“What are we drinking?” mini app and bot (@whattodrinkuh_bot). Version of 16 November 2026.</p>
+<p>Your favourites, lists, bar, notes, own recipes and settings are stored in Telegram Cloud Storage tied to your account and this bot (outside Telegram — in your browser); we cannot see them.</p>
+<p>The bot has a small server (Cloudflare Workers). It stores data only for features you turn on: infusion reminders (your Telegram ID, infusion name, date — deleted once sent or turned off), shared lists (list name, drinks, servings, creator’s Telegram ID — deleted after 90 days without changes) and chat polls (options until the poll is posted — deleted after 7 days). Messages, searches and payments are processed but not stored.</p>
+<p>“Ice &amp; limes for the author” is a voluntary gift; nothing is unlocked in return. Telegram Stars payments are processed by Telegram; ruble transfers by tips.tips.</p>
+<p>Anonymous usage statistics are collected with Yandex Metrica; an irreversible hash is sent instead of your Telegram ID, and names, usernames, phone numbers, messages and list contents are never sent. Anyone with a shared-list link can view and edit that list.</p>
+<p>The app is intended for adults (18+). Questions and deletion requests: Instagram <a href="https://www.instagram.com/ne.drozd/">@ne.drozd</a>.</p>
 </main></body></html>
