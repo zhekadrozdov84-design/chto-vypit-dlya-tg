@@ -1248,7 +1248,7 @@ const swHint=()=>{try{return!localStorage.getItem('wtd_swh')}catch(_){return tru
    Полоска на главном экране при запуске — с 3-го дня пользования, не чаще раза в 14 дней, сама скрывается через 8 с.
    После перехода к оплате — 60 дней тишины. Это добровольный подарок: взамен ничего не открывается. */
 const DONATE_URL='https://tips.tips/000492425';
-const STAR_LINKS={};/* {50:'https://t.me/$…',100:…,250:…} */
+const STAR_LINKS={50:'https://t.me/$aWzzZ2IK4UuRHgAABAvOSAhcZEc',100:'https://t.me/$M8LJKmIK4UuSHgAASKCWwhWYWMs',250:'https://t.me/$htFNaGIK4UuTHgAAyruj1kActco'};/* созданы воркером whattodrinkuh-stars (/setup) */
 let SUP={days:0,lastDay:'',cook:0,last:0,launch:0,snooze:0,pend:null},cardsSeen=0;
 const supDue=n=>n===3||(n>3&&(n-3)%7===0);
 function supDay(){const d=new Date().toISOString().slice(0,10);if(SUP.lastDay===d)return;SUP.lastDay=d;SUP.days++}
