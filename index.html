@@ -1002,7 +1002,7 @@ document.getElementById('lng').onclick=()=>setLang(lang==='ru'?'en':'ru');docume
 document.getElementById('terms').onclick=showTerms;document.getElementById('favs').onclick=showFavs;document.getElementById('mylists').onclick=showLists;document.getElementById('add').onclick=showMine;document.getElementById('flt').onclick=showFilters;
 let ageOk=false;
 /* Экран 18+ — только при первом запуске: подтверждение хранится в CloudStorage и в localStorage. */
-function hideAge(){ageOk=true;try{localStorage.setItem('wtd_age','1')}catch(e){}document.getElementById('age').style.display='none';afterAge()}
+function hideAge(){ageOk=true;try{localStorage.setItem('wtd_age','1')}catch(e){}document.getElementById('age').style.display='none';afterAge();setTimeout(()=>{if(loaded)supLaunch()},1500)}
 document.getElementById('age18').onclick=hideAge;
 document.getElementById('age0').onclick=()=>{track('age_no');F.zero=true;updCount();hideAge()};
 function step(dir){const cur=(inGroup&&focus)?focus:frontHub();const ang=h=>{const r=mv(M,h.tgt);return Math.atan2(r[0],r[2])};const a0=ang(cur);const others=hubs.filter(h=>h!==cur).map(h=>{let d=ang(h)-a0;while(d<=0)d+=2*Math.PI;return{h,d}}).sort((a,b)=>a.d-b.d);const pick=dir>0?others[0]:others[others.length-1];if(!pick)return;focus=pick.h;tilt=[0,0];wx=wy=0;haptic('sel')}
@@ -1242,19 +1242,44 @@ const y=sheet.scrollTop;showLists();sheet.scrollTop=y;updCount();showToast(`${es
 const swHint=()=>{try{return!localStorage.getItem('wtd_swh')}catch(_){return true}};
 
 /* --- «Автору на лёд и лаймы» ---
-   Пока DONATE_URL пустой, кнопок поддержки нигде нет. Показ строки: на 3-й, 10-й, 17-й… (каждые 7) день пользования
-   или «Готово» в режиме бармена; не чаще раза в 7 дней; после нажатия — 60 дней тишины. */
-const DONATE_URL='';
-let SUP={days:0,lastDay:'',cook:0,last:0,snooze:0,pend:null},cardsSeen=0;
+   Рубли — tips.tips (СБП/карта, во внешнем браузере). Звёзды — готовые ссылки на оплату (STAR_LINKS) от бота,
+   их создаёт воркер Cloudflare (/setup); пока ссылок нет, звёзд в окне нет.
+   Строка в карточке — после «Готово» в режиме бармена (3-й, 10-й, 17-й… раз), не чаще раза в 7 дней.
+   Полоска на главном экране при запуске — с 3-го дня пользования, не чаще раза в 14 дней, сама скрывается через 8 с.
+   После перехода к оплате — 60 дней тишины. Это добровольный подарок: взамен ничего не открывается. */
+const DONATE_URL='https://tips.tips/000492425';
+const STAR_LINKS={};/* {50:'https://t.me/$…',100:…,250:…} */
+let SUP={days:0,lastDay:'',cook:0,last:0,launch:0,snooze:0,pend:null},cardsSeen=0;
 const supDue=n=>n===3||(n>3&&(n-3)%7===0);
-function supDay(){const d=new Date().toISOString().slice(0,10);if(SUP.lastDay===d)return;SUP.lastDay=d;SUP.days++;if(supDue(SUP.days))SUP.pend='day'}
+function supDay(){const d=new Date().toISOString().slice(0,10);if(SUP.lastDay===d)return;SUP.lastDay=d;SUP.days++}
 function supCook(){SUP.cook++;if(supDue(SUP.cook))SUP.pend='cook'}
-function supBox(){if(!DONATE_URL||!SUP.pend)return'';const now=Date.now();if(now-SUP.last<7*864e5||now<SUP.snooze)return'';if(SUP.pend==='day'&&cardsSeen<2)return'';SUP.last=now;SUP.pend=null;track('donate_show');
+function supBox(){if(!DONATE_URL||SUP.pend!=='cook')return'';const now=Date.now();if(now-SUP.last<7*864e5||now<SUP.snooze)return'';SUP.last=now;SUP.pend=null;track('donate_show',{where:'cook'});
 return`<div id="supb" style="margin-top:18px;padding:12px 14px;border-radius:14px;background:rgba(168,240,58,.07);border:0.5px solid rgba(168,240,58,.25);display:flex;align-items:center;gap:10px"><span style="flex:1;font-size:14px;line-height:1.45;color:#E4F5C8">${lang==='en'?'Enjoying the app?':'Нравится приложение?'} <a href="#" id="supgo" style="color:#C8F27A;font-weight:600">${lang==='en'?'Ice & limes for the author':'Автору на лёд и лаймы'} 🍋</a></span><button class="cl" id="supx" aria-label="×" style="width:30px;height:30px;font-size:15px"><i class="ti ti-x" aria-hidden="true"></i></button></div>`}
-function supGo(){SUP.snooze=Date.now()+60*864e5;track('donate_click');if(tg&&tg.openLink)tg.openLink(DONATE_URL);else window.open(DONATE_URL,'_blank','noopener')}
-function bindSup(){const g=sheet.querySelector('#supgo');if(g)g.onclick=e=>{e.preventDefault();supGo();const b=sheet.querySelector('#supb');if(b)b.remove()};const x=sheet.querySelector('#supx');if(x)x.onclick=()=>{const b=sheet.querySelector('#supb');if(b)b.remove()}}
+/* Полоска при запуске: вызывается после загрузки и экрана 18+. */
+function supLaunch(){if(!DONATE_URL||SUP.days<3)return;const now=Date.now();if(now<SUP.snooze||now-SUP.launch<14*864e5||now-SUP.last<864e5)return;
+if(typeof cardOpen!=='undefined'&&cardOpen)return;SUP.launch=now;SUP.last=now;track('donate_show',{where:'launch'});const E_=lang==='en';
+const el=document.createElement('div');el.id='supbar';el.setAttribute('role','status');el.style.cssText='position:fixed;left:16px;right:16px;bottom:calc(var(--sb) + 132px);z-index:55;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 14px;border-radius:14px;background:rgba(30,42,10,.92);border:0.5px solid rgba(168,240,58,.35);color:#E4F5C8;font-size:14px;font-family:Roboto Condensed,Roboto,-apple-system,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:opacity .3s,transform .3s;opacity:0;transform:translateY(8px)';
+el.innerHTML=`<span style="flex:1;line-height:1.4">🍋 ${E_?'Enjoying the app?':'Нравится приложение?'} <a href="#" id="supbg" style="color:#C8F27A;font-weight:600">${E_?'Ice & limes for the author':'Автору на лёд и лаймы'}</a></span><button id="supbx" aria-label="Закрыть" style="width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#E4F5C8;font-size:15px;cursor:pointer">✕</button>`;
+document.body.appendChild(el);requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='none'});
+const close=()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300)};const tmr=setTimeout(close,8000);
+el.querySelector('#supbx').onclick=()=>{clearTimeout(tmr);close()};el.querySelector('#supbg').onclick=e=>{e.preventDefault();clearTimeout(tmr);close();supGo()}}
+function supGo(){track('donate_click');showDonate()}
+function showDonate(){navMark(showDonate);const E_=lang==='en';const L=(r,e)=>E_?e:r;const stars=Object.keys(STAR_LINKS).filter(k=>STAR_LINKS[k]);const canStars=stars.length&&tg&&tg.openInvoice;
+openSheet(head(L('Автору на лёд и лаймы','Ice & limes for the author'))+`<div style="font-size:15px;line-height:1.6;color:#C9C7E2;margin-top:8px">${L('Это добровольный подарок автору — взамен ничего не открывается и не меняется. Спасибо, что пользуетесь «Что пьём?» 🍋','A voluntary gift to the author — nothing is unlocked or changed in return. Thank you for using the app 🍋')}</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+${canStars?`<div style="font-size:13px;color:#8F8DB0">${L('Звёздами Telegram — в одно касание','With Telegram Stars — one tap')}</div><div style="display:flex;gap:8px">${stars.map(n=>`<button class="sec" data-star="${n}" style="flex:1">⭐ ${n}</button>`).join('')}</div>`:''}
+<div style="font-size:13px;color:#8F8DB0;margin-top:${canStars?6:0}px">${L('Рублями — СБП или картой','In rubles — SBP or card')}</div>
+<button class="big" id="dnr" style="background:#C8F27A;color:#1E2A0A">₽ ${L('Перевести рублями','Send in rubles')}</button></div>`);
+const op=u=>{if(tg&&tg.openLink)tg.openLink(u);else window.open(u,'_blank','noopener')};
+sheet.querySelector('#dnr').onclick=()=>{SUP.snooze=Date.now()+60*864e5;track('donate_go',{via:'rub'});op(DONATE_URL)};
+sheet.querySelectorAll('[data-star]').forEach(b=>b.onclick=()=>{const n=b.dataset.star;SUP.snooze=Date.now()+60*864e5;track('donate_go',{via:'stars',n:+n});
+try{tg.openInvoice(STAR_LINKS[n],st=>{if(st==='paid'){track('donate_paid',{n:+n});showToast(L('Спасибо за лёд и лаймы! 🍋','Thanks for the ice & limes! 🍋'))}})}catch(_){op(STAR_LINKS[n])}})}
+function bindSup(){const g=sheet.querySelector('#supgo');if(g)g.onclick=e=>{e.preventDefault();supGo()};const x=sheet.querySelector('#supx');if(x)x.onclick=()=>{const b=sheet.querySelector('#supb');if(b)b.remove()}}
 /* Постоянная ссылка рядом с ником и экран «О приложении» (меню «⋯» Telegram). */
-function supFooter(){if(!DONATE_URL)return;const ig=document.getElementById('ig');if(!ig||document.getElementById('igsup'))return;const a=document.createElement('a');a.id='igsup';a.href='#';a.textContent=(lang==='en'?'· Ice & limes for the author':'· Автору на лёд и лаймы');a.style.cssText='margin-left:6px;color:inherit;text-decoration:none;pointer-events:auto';a.onclick=e=>{e.preventDefault();supGo()};ig.insertAdjacentElement('afterend',a)}
+function supFooter(){if(!DONATE_URL)return;const ig=document.getElementById('ig');if(!ig||document.getElementById('igsup'))return;
+const w=document.createElement('div');w.id='igw';w.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) / 2);height:16px;display:flex;align-items:center;white-space:nowrap;font-size:12px;line-height:1;color:#8E8CAE';
+ig.parentNode.insertBefore(w,ig);w.appendChild(ig);ig.style.position='static';ig.style.transform='none';ig.style.left='auto';ig.style.bottom='auto';
+const a=document.createElement('a');a.id='igsup';a.href='#';a.textContent=(lang==='en'?'· Ice & limes for the author 🍋':'· Автору на лёд и лаймы 🍋');a.style.cssText='color:#B9D98A;text-decoration:none;letter-spacing:.02em';a.onclick=e=>{e.preventDefault();supGo()};w.appendChild(a)}
 Object.assign(ICONS,{'help-circle':'<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 16v.01"/><path d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483"/>',
 'message-circle':'<path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/>',
 share:'<path d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M15 6a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M15 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.7 10.7l6.6 -3.4"/><path d="M8.7 13.3l6.6 3.4"/>',
