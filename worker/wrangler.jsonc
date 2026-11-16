@@ -1,0 +1,12 @@
+// Сервер бота @whattodrinkuh_bot. Деплоится автоматически из GitHub (Cloudflare Workers Builds, корень — папка worker).
+// Секрет BOT_TOKEN хранится только в Cloudflare (Settings → Variables and Secrets), в репозитории его нет.
+{
+  "name": "whattodrinkuh-stars",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "keep_vars": true,
+  "kv_namespaces": [{ "binding": "KV", "id": "8e962b1b410e4c42b63b630f8e17ceea" }],
+  "triggers": { "crons": ["7 * * * *"] },
+  "observability": { "enabled": true }
+}
